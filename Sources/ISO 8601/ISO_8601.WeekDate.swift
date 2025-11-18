@@ -1,0 +1,92 @@
+//
+//  ISO_8601.WeekDate.swift
+//  swift-iso-8601
+//
+//  ISO 8601 Week Date representation
+//
+
+extension ISO_8601 {
+    /// ISO 8601 Week Date representation: YYYY-Www-D
+    ///
+    /// Week dates provide an alternative calendar representation based on weeks.
+    /// - Week 1 is the first week containing the first Thursday of the year
+    /// - Weeks always start on Monday (weekday=1) and end on Sunday (weekday=7)
+    /// - The week-year may differ from the calendar year at year boundaries
+    ///
+    /// ## Format
+    /// - Extended: `2024-W03-2` (Year 2024, Week 3, Tuesday)
+    /// - Basic: `2024W032`
+    ///
+    /// ## Example
+    /// ```swift
+    /// let weekDate = ISO_8601.WeekDate(weekYear: 2024, week: 3, weekday: 2)
+    /// let dateTime = weekDate.toDateTime()
+    /// ```
+    public struct WeekDate: Sendable, Equatable, Hashable {
+        /// ISO week-year (may differ from calendar year at boundaries)
+        public let weekYear: Int
+
+        /// ISO week number (1-53)
+        public let week: Int
+
+        /// ISO weekday (1=Monday, 2=Tuesday, ..., 7=Sunday)
+        public let weekday: Int
+
+        /// Create a week date with validation
+        ///
+        /// - Parameters:
+        ///   - weekYear: ISO week-year
+        ///   - week: Week number (1-53, validated for the year)
+        ///   - weekday: Weekday (1=Monday, 7=Sunday)
+        /// - Throws: `ISO_8601.Date.Error` if any component is out of valid range
+        public init(weekYear: Int, week: Int, weekday: Int) throws {
+            // Validate weekday
+            guard (1...7).contains(weekday) else {
+                throw ISO_8601.Date.Error.weekdayOutOfRange(weekday)
+            }
+
+            // Validate week number (must be valid for the year)
+            let maxWeeks = ISO_8601.DateTime.weeksInYear(weekYear)
+            guard (1...maxWeeks).contains(week) else {
+                throw ISO_8601.Date.Error.weekNumberOutOfRange(week, year: weekYear)
+            }
+
+            self.weekYear = weekYear
+            self.week = week
+            self.weekday = weekday
+        }
+
+        /// Create a week date without validation (internal use)
+        internal init(uncheckedWeekYear weekYear: Int, week: Int, weekday: Int) {
+            self.weekYear = weekYear
+            self.week = week
+            self.weekday = weekday
+        }
+
+        /// Convert week date to calendar date (DateTime)
+        ///
+        /// Calculates the calendar date corresponding to this week date.
+        /// The time components will be 00:00:00 UTC.
+        public func toDateTime() -> ISO_8601.DateTime {
+            // Find January 4th of the week-year (which is always in week 1)
+            let jan4 = ISO_8601.DateTime.daysSinceEpoch(year: weekYear, month: 1, day: 4)
+
+            // Find the weekday of January 4th
+            let jan4Weekday = ISO_8601.DateTime.weekday(year: weekYear, month: 1, day: 4)
+            let jan4ISOWeekday = jan4Weekday == 0 ? 7 : jan4Weekday
+
+            // Find the Monday of week 1
+            let mondayOfWeek1 = jan4 - (jan4ISOWeekday - 1)
+
+            // Calculate the date
+            // Week 1 starts at mondayOfWeek1
+            // Our date is (week - 1) weeks later, plus (weekday - 1) days
+            let daysSinceEpoch = mondayOfWeek1 + ((week - 1) * 7) + (weekday - 1)
+
+            let totalSeconds = daysSinceEpoch * TimeConstants.secondsPerDay
+
+            return ISO_8601.DateTime(uncheckedSecondsEpoch: totalSeconds, timezoneOffsetSeconds: 0)
+        }
+    }
+}
+
