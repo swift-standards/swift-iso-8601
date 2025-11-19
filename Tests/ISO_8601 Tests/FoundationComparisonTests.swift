@@ -10,8 +10,8 @@ import Foundation
 @testable import ISO_8601
 import StandardTime
 
-@Suite("Foundation Comparison Tests")
-struct FoundationComparisonTests {
+@Suite
+struct `Foundation Comparison Tests` {
 
     // MARK: - Critical Year Boundary Cases
 
@@ -102,8 +102,8 @@ struct FoundationComparisonTests {
 
     // MARK: - Weekday Numbering (ISO vs Gregorian)
 
-    @Test("ISO weekday numbering: Monday=1, Sunday=7")
-    func isoWeekdayNumbering() throws {
+    @Test
+    func `ISO weekday numbering: Monday=1, Sunday=7`() throws {
         // 2024-01-01 is Monday
         let monday = try ISO_8601.DateTime(year: 2024, month: 1, day: 1)
         #expect(monday.isoWeekday == 1, "Monday should be 1")
@@ -127,8 +127,8 @@ struct FoundationComparisonTests {
 
     // MARK: - Ordinal Dates
 
-    @Test("Ordinal date: Feb 29 in leap year is day 60")
-    func ordinalDateLeapYearFeb29() throws {
+    @Test
+    func `Ordinal date: Feb 29 in leap year is day 60`() throws {
         let dt = try ISO_8601.DateTime(year: 2024, month: 2, day: 29)
         #expect(dt.ordinalDay == 60, "Feb 29 in leap year should be day 60")
 
@@ -141,8 +141,8 @@ struct FoundationComparisonTests {
         #expect(reconstituted.components.day == 29)
     }
 
-    @Test("Ordinal date: Day 60 in common year is March 1")
-    func ordinalDateCommonYearDay60() throws {
+    @Test
+    func `Ordinal date: Day 60 in common year is March 1`() throws {
         let ordinal = try ISO_8601.OrdinalDate(year: 2023, day: 60)
         let dt = ISO_8601.DateTime(ordinal)
 
@@ -150,8 +150,8 @@ struct FoundationComparisonTests {
         #expect(dt.components.day == 1, "Day 60 in common year should be March 1")
     }
 
-    @Test("Ordinal date: Day 366 valid in leap year, invalid in common year")
-    func ordinalDateDay366() throws {
+    @Test
+    func `Ordinal date: Day 366 valid in leap year, invalid in common year`() throws {
         // Valid in leap year
         let leapYearOrdinal = try ISO_8601.OrdinalDate(year: 2024, day: 366)
         let dt = ISO_8601.DateTime(leapYearOrdinal)
@@ -166,8 +166,8 @@ struct FoundationComparisonTests {
 
     // MARK: - Parsing Format Validation
 
-    @Test("Parse extended format: 2024-01-15")
-    func parseExtendedFormat() throws {
+    @Test
+    func `Parse extended format: 2024-01-15`() throws {
         let dt = try ISO_8601.DateTime.Parser.parse("2024-01-15")
         #expect(dt.components.year == 2024)
         #expect(dt.components.month == 1)
@@ -183,8 +183,8 @@ struct FoundationComparisonTests {
         #expect(calendar.component(.day, from: foundationDate) == 15)
     }
 
-    @Test("Parse basic format: 20240115")
-    func parseBasicFormat() throws {
+    @Test
+    func `Parse basic format: 20240115`() throws {
         let dt = try ISO_8601.DateTime.Parser.parse("20240115")
         #expect(dt.components.year == 2024)
         #expect(dt.components.month == 1)
@@ -204,8 +204,8 @@ struct FoundationComparisonTests {
 
     // MARK: - Historical Dates
 
-    @Test("Historical date: July 4, 1776 (Thursday)")
-    func historicalDate1776() throws {
+    @Test
+    func `Historical date: July 4, 1776 (Thursday)`() throws {
         // American Independence Day - known to be Thursday
         let dt = try ISO_8601.DateTime(year: 1776, month: 7, day: 4)
 
