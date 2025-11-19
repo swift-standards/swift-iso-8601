@@ -11,6 +11,13 @@ extension String { var tests: Self { self + " Tests" } }
 extension Target.Dependency {
     static var iso8601: Self { .target(name: .iso8601) }
     static var standards: Self { .product(name: "Standards", package: "swift-standards") }
+    static var time: Self {
+        .product(
+            name: "Time",
+            package: "swift-standards",
+            moduleAliases: ["Time": "StandardTime"]
+        )
+    }
     static var incits_4_1986: Self { .product(name: "INCITS 4 1986", package: "swift-incits-4-1986") }
     static var standardsTestSupport: Self { .product(name: "StandardsTestSupport", package: "swift-standards") }
 }
@@ -35,6 +42,7 @@ let package = Package(
             name: .iso8601,
             dependencies: [
                 .standards,
+                .time,
                 .incits_4_1986
             ]
         ),

@@ -5,6 +5,8 @@
 //  Date components with validation
 //
 
+import StandardTime
+
 extension ISO_8601.Date {
     
     /// Date components extracted from a date-time
@@ -150,44 +152,34 @@ extension ISO_8601.Date.Components {
 
 extension ISO_8601.Date.Components {
     public init(_ dateTime: ISO_8601.Date) {
-        // Apply timezone offset to get local time
-        let totalSeconds = dateTime.secondsSinceEpoch + dateTime.timezoneOffsetSeconds
-        let totalDays = totalSeconds / TimeConstants.secondsPerDay
-        let secondsInDay = totalSeconds % TimeConstants.secondsPerDay
-        
-        let hour = secondsInDay / TimeConstants.secondsPerHour
-        let minute = (secondsInDay % TimeConstants.secondsPerHour) / TimeConstants.secondsPerMinute
-        let second = secondsInDay % TimeConstants.secondsPerMinute
-        
-        // Calculate year, month, day from days since epoch
-        // Optimized O(1) year calculation instead of O(n) loop
-        let (year, remainingDays) = ISO_8601.Date.yearAndDays(fromDaysSinceEpoch: totalDays)
-        
-        // Calculate month and day
-        let daysInMonths = ISO_8601.Date.daysInMonths(year: year)
-        var month = 1
-        var daysInCurrentMonth = remainingDays
-        for daysInMonth in daysInMonths {
-            if daysInCurrentMonth < daysInMonth {
-                break
-            }
-            daysInCurrentMonth -= daysInMonth
-            month += 1
+        // Apply timezone offset to get local time components
+        let localTime = StandardTime.Time(
+            secondsSinceEpoch: dateTime.secondsSinceEpoch + dateTime.timezoneOffsetSeconds
+        )
+
+        // Convert StandardTime.Time.Weekday enum to Int (0=Sunday)
+        let weekdayNumber: Int
+        switch localTime.weekday {
+        case .sunday: weekdayNumber = 0
+        case .monday: weekdayNumber = 1
+        case .tuesday: weekdayNumber = 2
+        case .wednesday: weekdayNumber = 3
+        case .thursday: weekdayNumber = 4
+        case .friday: weekdayNumber = 5
+        case .saturday: weekdayNumber = 6
         }
-        
-        let day = daysInCurrentMonth + 1
-        
+
         // Components calculated from valid epoch seconds are always valid
         // Use unchecked initializer to bypass validation in hot path
         self = ISO_8601.Date.Components(
-            uncheckedYear: year,
-            month: month,
-            day: day,
-            hour: hour,
-            minute: minute,
-            second: second,
+            uncheckedYear: localTime.year.value,
+            month: localTime.month.value,
+            day: localTime.day.value,
+            hour: localTime.hour.value,
+            minute: localTime.minute.value,
+            second: localTime.second.value,
             nanoseconds: dateTime.nanoseconds,
-            weekday: ISO_8601.Date.weekday(year: year, month: month, day: day)
+            weekday: weekdayNumber
         )
     }
 }

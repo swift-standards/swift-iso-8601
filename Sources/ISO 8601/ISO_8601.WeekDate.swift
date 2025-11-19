@@ -5,6 +5,8 @@
 //  ISO 8601 Week Date representation
 //
 
+import StandardTime
+
 extension ISO_8601 {
     /// ISO 8601 Week Date representation: YYYY-Www-D
     ///
@@ -69,21 +71,32 @@ extension ISO_8601 {
         /// The time components will be 00:00:00 UTC.
         public func toDateTime() -> ISO_8601.DateTime {
             // Find January 4th of the week-year (which is always in week 1)
-            let jan4 = ISO_8601.DateTime.daysSinceEpoch(year: weekYear, month: 1, day: 4)
+            let jan4Time = try! StandardTime.Time(year: weekYear, month: 1, day: 4, hour: 0, minute: 0, second: 0)
+            let jan4DaysSinceEpoch = jan4Time.secondsSinceEpoch / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
 
             // Find the weekday of January 4th
-            let jan4Weekday = ISO_8601.DateTime.weekday(year: weekYear, month: 1, day: 4)
+            let jan4WeekdayEnum = jan4Time.weekday
+            let jan4Weekday: Int
+            switch jan4WeekdayEnum {
+            case .sunday: jan4Weekday = 0
+            case .monday: jan4Weekday = 1
+            case .tuesday: jan4Weekday = 2
+            case .wednesday: jan4Weekday = 3
+            case .thursday: jan4Weekday = 4
+            case .friday: jan4Weekday = 5
+            case .saturday: jan4Weekday = 6
+            }
             let jan4ISOWeekday = jan4Weekday == 0 ? 7 : jan4Weekday
 
             // Find the Monday of week 1
-            let mondayOfWeek1 = jan4 - (jan4ISOWeekday - 1)
+            let mondayOfWeek1 = jan4DaysSinceEpoch - (jan4ISOWeekday - 1)
 
             // Calculate the date
             // Week 1 starts at mondayOfWeek1
             // Our date is (week - 1) weeks later, plus (weekday - 1) days
             let daysSinceEpoch = mondayOfWeek1 + ((week - 1) * 7) + (weekday - 1)
 
-            let totalSeconds = daysSinceEpoch * TimeConstants.secondsPerDay
+            let totalSeconds = daysSinceEpoch * StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
 
             return ISO_8601.DateTime(uncheckedSecondsEpoch: totalSeconds, timezoneOffsetSeconds: 0)
         }

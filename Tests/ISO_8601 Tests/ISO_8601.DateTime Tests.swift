@@ -229,21 +229,24 @@ struct `ISO_8601.DateTime Tests` {
 
     @Test
     func `Rejects invalid month`() throws {
-        #expect(throws: ISO_8601.Date.Error.self) {
+        // Calendar validation delegated to Time - expect Time.Error
+        #expect(throws: Time.Error.monthOutOfRange(13)) {
             _ = try ISO_8601.DateTime(year: 2024, month: 13, day: 1)
         }
     }
 
     @Test
     func `Rejects invalid day`() throws {
-        #expect(throws: ISO_8601.Date.Error.self) {
+        // Calendar validation delegated to Time - expect Time.Error
+        #expect(throws: Time.Error.self) {
             _ = try ISO_8601.DateTime(year: 2024, month: 2, day: 30)
         }
     }
 
     @Test
     func `Rejects invalid hour`() throws {
-        #expect(throws: ISO_8601.Date.Error.self) {
+        // Calendar validation delegated to Time - expect Time.Error
+        #expect(throws: Time.Error.self) {
             _ = try ISO_8601.DateTime(year: 2024, month: 1, day: 1, hour: 24)
         }
     }

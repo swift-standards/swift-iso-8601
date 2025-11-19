@@ -6,10 +6,7 @@
 //
 
 import Standards
-
-// MARK: - Time Constants
-
-
+import StandardTime
 
 extension ISO_8601 {
 
@@ -18,7 +15,7 @@ extension ISO_8601 {
     /// ISO 8601 date-time representation
     ///
     /// Represents a date-time value per ISO 8601:2019.
-    /// Stores seconds since Unix epoch (1970-01-01 00:00:00 UTC) internally.
+    /// Uses Standards/Time as the foundation for all calendar logic.
     ///
     /// ## Three Representations
     ///
@@ -35,16 +32,22 @@ extension ISO_8601 {
     /// // "2024-01-15T12:30:00Z"
     /// ```
     public struct DateTime: Sendable, Equatable, Hashable, Comparable {
-        /// Seconds since Unix epoch (1970-01-01 00:00:00 UTC)
-        public let secondsSinceEpoch: Int
+        /// The UTC time
+        public let time: StandardTime.Time
 
-        /// Nanoseconds component (0-999,999,999)
-        public let nanoseconds: Int
-
-        /// Timezone offset in seconds from UTC
+        /// Timezone offset from UTC
         /// Positive values are east of UTC, negative values are west
-        /// Example: +0100 = 3600, -0500 = -18000
-        public let timezoneOffsetSeconds: Int
+        /// Example: +0100 = 1 hour, -0500 = -5 hours
+        public let timezoneOffset: StandardTime.Time.TimezoneOffset
+
+        /// Create a date-time from Time and timezone offset
+        /// - Parameters:
+        ///   - time: The UTC time
+        ///   - timezoneOffset: Timezone offset (default: UTC)
+        public init(time: StandardTime.Time, timezoneOffset: StandardTime.Time.TimezoneOffset = .utc) {
+            self.time = time
+            self.timezoneOffset = timezoneOffset
+        }
 
         /// Create a date-time from seconds since epoch
         /// - Parameters:
@@ -56,17 +59,64 @@ extension ISO_8601 {
             guard (0..<1_000_000_000).contains(nanoseconds) else {
                 throw ISO_8601.Date.Error.invalidFractionalSecond(String(nanoseconds))
             }
-            self.secondsSinceEpoch = secondsSinceEpoch
-            self.nanoseconds = nanoseconds
-            self.timezoneOffsetSeconds = timezoneOffsetSeconds
+            // Convert total nanoseconds to millisecond/microsecond/nanosecond components
+            let millisecond = nanoseconds / 1_000_000
+            let remaining = nanoseconds % 1_000_000
+            let microsecond = remaining / 1000
+            let nanosecond = remaining % 1000
+
+            var baseTime = StandardTime.Time(secondsSinceEpoch: secondsSinceEpoch)
+            let time = StandardTime.Time(
+                year: baseTime.year,
+                month: baseTime.month,
+                day: baseTime.day,
+                hour: baseTime.hour,
+                minute: baseTime.minute,
+                second: baseTime.second,
+                millisecond: try! StandardTime.Time.Millisecond(millisecond),
+                microsecond: try! StandardTime.Time.Microsecond(microsecond),
+                nanosecond: try! StandardTime.Time.Nanosecond(nanosecond)
+            )
+            self.init(time: time, timezoneOffset: StandardTime.Time.TimezoneOffset(seconds: timezoneOffsetSeconds))
         }
 
         /// Create a date-time without validation (internal use only)
         /// - Warning: Using this with invalid nanoseconds will create an invalid DateTime
         internal init(uncheckedSecondsEpoch: Int, nanoseconds: Int = 0, timezoneOffsetSeconds: Int = 0) {
-            self.secondsSinceEpoch = uncheckedSecondsEpoch
-            self.nanoseconds = nanoseconds
-            self.timezoneOffsetSeconds = timezoneOffsetSeconds
+            // Convert total nanoseconds to millisecond/microsecond/nanosecond components
+            let millisecond = nanoseconds / 1_000_000
+            let remaining = nanoseconds % 1_000_000
+            let microsecond = remaining / 1000
+            let nanosecond = remaining % 1000
+
+            let baseTime = StandardTime.Time(secondsSinceEpoch: uncheckedSecondsEpoch)
+            let time = StandardTime.Time(
+                year: baseTime.year,
+                month: baseTime.month,
+                day: baseTime.day,
+                hour: baseTime.hour,
+                minute: baseTime.minute,
+                second: baseTime.second,
+                millisecond: try! StandardTime.Time.Millisecond(millisecond),
+                microsecond: try! StandardTime.Time.Microsecond(microsecond),
+                nanosecond: try! StandardTime.Time.Nanosecond(nanosecond)
+            )
+            self.init(time: time, timezoneOffset: StandardTime.Time.TimezoneOffset(seconds: timezoneOffsetSeconds))
+        }
+
+        /// Seconds since Unix epoch (computed property for compatibility)
+        public var secondsSinceEpoch: Int {
+            time.secondsSinceEpoch
+        }
+
+        /// Nanoseconds component (computed property for compatibility)
+        public var nanoseconds: Int {
+            time.totalNanoseconds
+        }
+
+        /// Timezone offset in seconds (computed property for compatibility)
+        public var timezoneOffsetSeconds: Int {
+            timezoneOffset.seconds
         }
     }
 }
@@ -124,28 +174,27 @@ extension ISO_8601.DateTime {
         nanoseconds: Int = 0,
         timezoneOffsetSeconds: Int = 0
     ) throws {
-        // Validate all components by attempting to create Components
-        // This provides consistent validation logic
-        _ = try ISO_8601.Date.Components(
+        // Convert total nanoseconds to millisecond/microsecond/nanosecond components
+        let millisecond = nanoseconds / 1_000_000
+        let remaining = nanoseconds % 1_000_000
+        let microsecond = remaining / 1000
+        let nanosecond = remaining % 1000
+
+        // Create Time with validation - Time.Error propagates naturally
+        // This is correct: Time owns calendar validation, ISO 8601 delegates to it
+        let time = try StandardTime.Time(
             year: year,
             month: month,
             day: day,
             hour: hour,
             minute: minute,
-            second: second
+            second: second,
+            millisecond: millisecond,
+            microsecond: microsecond,
+            nanosecond: nanosecond
         )
 
-        // Calculate days since epoch
-        let daysSinceEpoch = Self.daysSinceEpoch(year: year, month: month, day: day)
-
-        // Calculate total seconds (as UTC)
-        let totalSeconds =
-            daysSinceEpoch * TimeConstants.secondsPerDay +
-            hour * TimeConstants.secondsPerHour +
-            minute * TimeConstants.secondsPerMinute +
-            second
-
-        try self.init(secondsSinceEpoch: totalSeconds, nanoseconds: nanoseconds, timezoneOffsetSeconds: timezoneOffsetSeconds)
+        self.init(time: time, timezoneOffset: StandardTime.Time.TimezoneOffset(seconds: timezoneOffsetSeconds))
     }
 }
 
@@ -179,7 +228,7 @@ extension ISO_8601.DateTime {
     /// This is the day number within the year, starting from 1 for January 1.
     public var ordinalDay: Int {
         let comp = components
-        let monthDays = Self.daysInMonths(year: comp.year)
+        let monthDays = StandardTime.Time.Calendar.Gregorian.daysInMonths(year: comp.year)
         var days = comp.day
         for m in 0..<(comp.month - 1) {
             days += monthDays[m]
@@ -219,13 +268,25 @@ extension ISO_8601.DateTime {
         // ISO weekday: 1=Monday, 7=Sunday
         let isoDay = isoWeekday
         let daysSinceMonday = isoDay - 1
-        let mondayOfWeek = Self.daysSinceEpoch(year: comp.year, month: comp.month, day: comp.day) - daysSinceMonday
+        let currentTime = try! StandardTime.Time(year: comp.year, month: comp.month, day: comp.day, hour: 0, minute: 0, second: 0)
+        let mondayOfWeek = currentTime.secondsSinceEpoch / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay - daysSinceMonday
 
         // Find January 4th of this year (which is always in week 1)
-        let jan4 = Self.daysSinceEpoch(year: comp.year, month: 1, day: 4)
+        let jan4Time = try! StandardTime.Time(year: comp.year, month: 1, day: 4, hour: 0, minute: 0, second: 0)
+        let jan4 = jan4Time.secondsSinceEpoch / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
 
         // Find the Monday of the week containing January 4th
-        let jan4Weekday = Self.weekday(year: comp.year, month: 1, day: 4)
+        let jan4WeekdayEnum = jan4Time.weekday
+        let jan4Weekday: Int
+        switch jan4WeekdayEnum {
+        case .sunday: jan4Weekday = 0
+        case .monday: jan4Weekday = 1
+        case .tuesday: jan4Weekday = 2
+        case .wednesday: jan4Weekday = 3
+        case .thursday: jan4Weekday = 4
+        case .friday: jan4Weekday = 5
+        case .saturday: jan4Weekday = 6
+        }
         let jan4ISOWeekday = jan4Weekday == 0 ? 7 : jan4Weekday
         let jan4DaysSinceMonday = jan4ISOWeekday - 1
         let mondayOfWeek1 = jan4 - jan4DaysSinceMonday
@@ -252,14 +313,25 @@ extension ISO_8601.DateTime {
         // - January 1 is a Thursday, OR
         // - January 1 is a Wednesday and it's a leap year
 
-        let jan1Weekday = weekday(year: year, month: 1, day: 1)
+        let jan1Time = try! StandardTime.Time(year: year, month: 1, day: 1, hour: 0, minute: 0, second: 0)
+        let jan1WeekdayEnum = jan1Time.weekday
+        let jan1Weekday: Int
+        switch jan1WeekdayEnum {
+        case .sunday: jan1Weekday = 0
+        case .monday: jan1Weekday = 1
+        case .tuesday: jan1Weekday = 2
+        case .wednesday: jan1Weekday = 3
+        case .thursday: jan1Weekday = 4
+        case .friday: jan1Weekday = 5
+        case .saturday: jan1Weekday = 6
+        }
         let jan1ISOWeekday = jan1Weekday == 0 ? 7 : jan1Weekday
 
         if jan1ISOWeekday == 4 { // Thursday
             return 53
         }
 
-        if jan1ISOWeekday == 3 && isLeapYear(year) { // Wednesday and leap year
+        if jan1ISOWeekday == 3 && StandardTime.Time.Calendar.Gregorian.isLeapYear(year) { // Wednesday and leap year
             return 53
         }
 
@@ -449,8 +521,8 @@ extension ISO_8601.DateTime {
         private static func formatTimezoneOffset(_ offsetSeconds: Int, extended: Bool) -> String {
             let sign = offsetSeconds >= 0 ? "+" : "-"
             let absOffset = abs(offsetSeconds)
-            let hours = absOffset / TimeConstants.secondsPerHour
-            let minutes = (absOffset % TimeConstants.secondsPerHour) / TimeConstants.secondsPerMinute
+            let hours = absOffset / Time.Calendar.Gregorian.TimeConstants.secondsPerHour
+            let minutes = (absOffset % Time.Calendar.Gregorian.TimeConstants.secondsPerHour) / Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
 
             let hoursStr = formatTwoDigits(hours)
             let minutesStr = formatTwoDigits(minutes)
@@ -556,7 +628,7 @@ extension ISO_8601.DateTime {
                 )
                 // Add one day (86400 seconds)
                 return try ISO_8601.DateTime(
-                    secondsSinceEpoch: nextDayDateTime.secondsSinceEpoch + TimeConstants.secondsPerDay,
+                    secondsSinceEpoch: nextDayDateTime.secondsSinceEpoch + Time.Calendar.Gregorian.TimeConstants.secondsPerDay,
                     nanoseconds: 0,
                     timezoneOffsetSeconds: timezoneOffset
                 )
@@ -888,7 +960,7 @@ extension ISO_8601.DateTime {
                     throw ISO_8601.Date.Error.invalidTimezone(value)
                 }
 
-                let offset = hours * TimeConstants.secondsPerHour + minutes * TimeConstants.secondsPerMinute
+                let offset = hours * Time.Calendar.Gregorian.TimeConstants.secondsPerHour + minutes * Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
                 return positive ? offset : -offset
             } else {
                 // Basic format: HHMM
@@ -903,7 +975,7 @@ extension ISO_8601.DateTime {
                     throw ISO_8601.Date.Error.invalidTimezone(value)
                 }
 
-                let offset = hours * TimeConstants.secondsPerHour + minutes * TimeConstants.secondsPerMinute
+                let offset = hours * Time.Calendar.Gregorian.TimeConstants.secondsPerHour + minutes * Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
                 return positive ? offset : -offset
             }
         }
@@ -945,121 +1017,3 @@ extension ISO_8601.DateTime: CustomStringConvertible {
     }
 }
 
-// MARK: - Internal Helpers (Calendar Logic from RFC 5322)
-
-extension ISO_8601.DateTime {
-    internal static func isLeapYear(_ year: Int) -> Bool {
-        (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
-    }
-
-    // Cached arrays to avoid allocation on every call
-    static let daysInCommonYearMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    static let daysInLeapYearMonths = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-
-    static func daysInMonths(year: Int) -> [Int] {
-        isLeapYear(year) ? daysInLeapYearMonths : daysInCommonYearMonths
-    }
-
-    /// Optimized O(1) calculation of year and remaining days from days since epoch
-    /// Uses pure arithmetic based on Gregorian calendar structure
-    static func yearAndDays(fromDaysSinceEpoch days: Int) -> (year: Int, remainingDays: Int) {
-        // Gregorian calendar has a 400-year cycle with exactly 146097 days
-        // This cycle contains: 97 leap years and 303 common years
-        let cyclesOf400 = days / 146097
-        var remainingDays = days % 146097
-
-        // Within each 400-year cycle, 100-year periods vary:
-        // - First 3 periods: 36524 days each (24 leap years, 76 common years)
-        // - Last period: 36525 days (25 leap years because year x400 is always a leap year)
-        // However, since 1970 is 30 years into a cycle, we need special handling
-
-        // For epoch 1970, we're 30 years into the 1600-2000 cycle
-        // So the relevant centuries starting from 1970 are: 2000, 2100, 2200, 2300...
-        // 2000 is divisible by 400 (leap year), so 1970-2069 has 25 leap years = 36525 days
-        // 2100, 2200, 2300 are not divisible by 400, so they have 24 leap years = 36524 days each
-
-        var cyclesOf100: Int
-        if remainingDays >= 36525 {  // First century (1970-2070) includes year 2000
-            cyclesOf100 = 1
-            remainingDays -= 36525
-            // Add remaining centuries (each 36524 days)
-            let additionalCenturies = min(remainingDays / 36524, 2)  // Max 2 more (to stay within 400-year cycle)
-            cyclesOf100 += additionalCenturies
-            remainingDays -= additionalCenturies * 36524
-        } else {
-            cyclesOf100 = 0
-        }
-
-        // Within each 100-year period, 4-year periods have 1461 days
-        // (1 leap year, 3 common years)
-        // We use min(_, 24) to stay within the 100-year boundary
-        let cyclesOf4 = min(remainingDays / 1461, 24)
-        remainingDays -= cyclesOf4 * 1461
-
-        // Handle remaining 0-3 years, accounting for possible leap year
-        var year = 1970 + cyclesOf400 * 400 + cyclesOf100 * 100 + cyclesOf4 * 4
-
-        // Process up to 3 remaining years
-        for _ in 0..<3 {
-            let daysInYear = isLeapYear(year) ? 366 : 365
-            if remainingDays < daysInYear {
-                break
-            }
-            remainingDays -= daysInYear
-            year += 1
-        }
-
-        return (year, remainingDays)
-    }
-
-    internal static func daysSinceEpoch(year: Int, month: Int, day: Int) -> Int {
-        // Optimized calculation avoiding year-by-year iteration
-        let yearsSince1970 = year - 1970
-
-        // Calculate leap years between 1970 and year (exclusive)
-        // Count years divisible by 4, subtract those divisible by 100, add back those divisible by 400
-        let leapYears: Int
-        if yearsSince1970 > 0 {
-            let yearBefore = year - 1
-            leapYears = (yearBefore / 4 - 1970 / 4) -
-                        (yearBefore / 100 - 1970 / 100) +
-                        (yearBefore / 400 - 1970 / 400)
-        } else {
-            leapYears = 0
-        }
-
-        var days = yearsSince1970 * TimeConstants.daysPerCommonYear + leapYears
-
-        // Add days for complete months in current year
-        let monthDays = daysInMonths(year: year)
-        for m in 0..<(month - 1) {
-            days += monthDays[m]
-        }
-
-        // Add remaining days
-        days += day - 1
-
-        return days
-    }
-
-    /// Calculate day of week (0 = Sunday, 6 = Saturday)
-    /// Using Zeller's congruence algorithm
-    internal static func weekday(year: Int, month: Int, day: Int) -> Int {
-        var y = year
-        var m = month
-
-        if m < 3 {
-            m += 12
-            y -= 1
-        }
-
-        let q = day
-        let K = y % 100
-        let J = y / 100
-
-        let h = (q + ((13 * (m + 1)) / 5) + K + (K / 4) + (J / 4) - (2 * J)) % 7
-
-        // Convert from Zeller's (0=Saturday) to our (0=Sunday)
-        return (h + 6) % 7
-    }
-}
