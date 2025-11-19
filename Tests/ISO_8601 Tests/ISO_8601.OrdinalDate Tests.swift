@@ -125,17 +125,14 @@ struct `ISO_8601.OrdinalDate Tests` {
         #expect(original.components.day == converted.components.day)
     }
 
-    @Test
-    func `Round-trip all days in year`() throws {
-        // Test a few representative days
-        for day in [1, 32, 60, 100, 200, 300, 365] {
-            let ordinal = try ISO_8601.OrdinalDate(year: 2023, day: day)
-            let dateTime = ordinal.toDateTime()
-            let roundTrip = dateTime.toOrdinalDate()
+    @Test(arguments: [1, 32, 60, 100, 200, 300, 365])
+    func `Round-trip all days in year`(day: Int) throws {
+        let ordinal = try ISO_8601.OrdinalDate(year: 2023, day: day)
+        let dateTime = ordinal.toDateTime()
+        let roundTrip = dateTime.toOrdinalDate()
 
-            #expect(roundTrip.year == ordinal.year)
-            #expect(roundTrip.day == ordinal.day)
-        }
+        #expect(roundTrip.year == ordinal.year, "Day \(day) - year")
+        #expect(roundTrip.day == ordinal.day, "Day \(day) - day")
     }
 
     // MARK: - Equality

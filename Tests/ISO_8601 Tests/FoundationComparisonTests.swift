@@ -15,133 +15,89 @@ struct FoundationComparisonTests {
 
     // MARK: - Critical Year Boundary Cases
 
-    @Test("Year boundary: 2023-01-01 (Sunday) belongs to 2022-W52")
-    func yearBoundary2023Jan01() throws {
-        let dt = try ISO_8601.DateTime(year: 2023, month: 1, day: 1)
+    @Test(
+        "Year boundary",
+        arguments: [
+            (year: 2023, month: 1, day: 1, weekYear: 2022, week: 52, weekday: 7, desc: "2023-01-01 (Sunday) → 2022-W52"),
+            (year: 2024, month: 1, day: 1, weekYear: 2024, week: 1, weekday: 1, desc: "2024-01-01 (Monday) → 2024-W01"),
+            (year: 2025, month: 12, day: 29, weekYear: 2026, week: 1, weekday: 1, desc: "2025-12-29 (Monday) → 2026-W01"),
+        ]
+    )
+    func yearBoundary(
+        year: Int, month: Int, day: Int,
+        weekYear: Int, week: Int, weekday: Int,
+        desc: String
+    ) throws {
+        let dt = try ISO_8601.DateTime(year: year, month: month, day: day)
         let weekDate = dt.toWeekDate()
 
-        #expect(weekDate.weekYear == 2022, "Jan 1, 2023 (Sunday) should be in 2022-W52")
-        #expect(weekDate.week == 52)
-        #expect(weekDate.weekday == 7, "Sunday should be weekday 7")
+        #expect(weekDate.weekYear == weekYear, "\(desc) - week-year")
+        #expect(weekDate.week == week, "\(desc) - week number")
+        #expect(weekDate.weekday == weekday, "\(desc) - weekday")
 
         // Verify against Foundation
         let calendar = Calendar(identifier: .iso8601)
-        let date = DateComponents(calendar: calendar, year: 2023, month: 1, day: 1).date!
+        let date = DateComponents(calendar: calendar, year: year, month: month, day: day).date!
         let weekOfYear = calendar.component(.weekOfYear, from: date)
         let yearForWeekOfYear = calendar.component(.yearForWeekOfYear, from: date)
 
-        #expect(yearForWeekOfYear == 2022, "Foundation agrees: week-year is 2022")
-        #expect(weekOfYear == 52, "Foundation agrees: week number is 52")
-    }
-
-    @Test("Year boundary: 2024-01-01 (Monday) is in 2024-W01")
-    func yearBoundary2024Jan01() throws {
-        let dt = try ISO_8601.DateTime(year: 2024, month: 1, day: 1)
-        let weekDate = dt.toWeekDate()
-
-        #expect(weekDate.weekYear == 2024)
-        #expect(weekDate.week == 1)
-        #expect(weekDate.weekday == 1, "Monday should be weekday 1")
-
-        // Verify against Foundation
-        let calendar = Calendar(identifier: .iso8601)
-        let date = DateComponents(calendar: calendar, year: 2024, month: 1, day: 1).date!
-        let weekOfYear = calendar.component(.weekOfYear, from: date)
-        let yearForWeekOfYear = calendar.component(.yearForWeekOfYear, from: date)
-
-        #expect(yearForWeekOfYear == 2024, "Foundation agrees: week-year is 2024")
-        #expect(weekOfYear == 1, "Foundation agrees: week number is 1")
-    }
-
-    @Test("Year boundary: 2025-12-29 (Monday) is in 2026-W01")
-    func yearBoundary2025Dec29() throws {
-        let dt = try ISO_8601.DateTime(year: 2025, month: 12, day: 29)
-        let weekDate = dt.toWeekDate()
-
-        #expect(weekDate.weekYear == 2026, "Dec 29, 2025 (Monday) should be in 2026-W01")
-        #expect(weekDate.week == 1)
-        #expect(weekDate.weekday == 1, "Monday should be weekday 1")
-
-        // Verify against Foundation
-        let calendar = Calendar(identifier: .iso8601)
-        let date = DateComponents(calendar: calendar, year: 2025, month: 12, day: 29).date!
-        let weekOfYear = calendar.component(.weekOfYear, from: date)
-        let yearForWeekOfYear = calendar.component(.yearForWeekOfYear, from: date)
-
-        #expect(yearForWeekOfYear == 2026, "Foundation agrees: week-year is 2026")
-        #expect(weekOfYear == 1, "Foundation agrees: week number is 1")
+        #expect(yearForWeekOfYear == weekYear, "Foundation agrees: \(desc) week-year")
+        #expect(weekOfYear == week, "Foundation agrees: \(desc) week number")
     }
 
     // MARK: - January 4 Rule (Always Week 1)
 
-    @Test("ISO 8601 rule: January 4 is always in week 1")
-    func january4AlwaysWeek1() throws {
-        // Test multiple years
-        let years = [2020, 2021, 2022, 2023, 2024, 2025, 2026]
+    @Test(
+        "ISO 8601 rule: January 4 is always in week 1",
+        arguments: [2020, 2021, 2022, 2023, 2024, 2025, 2026]
+    )
+    func january4AlwaysWeek1(year: Int) throws {
+        let dt = try ISO_8601.DateTime(year: year, month: 1, day: 4)
+        let weekDate = dt.toWeekDate()
 
-        for year in years {
-            let dt = try ISO_8601.DateTime(year: year, month: 1, day: 4)
-            let weekDate = dt.toWeekDate()
+        #expect(weekDate.weekYear == year, "Jan 4, \(year) should be in year \(year)")
+        #expect(weekDate.week == 1, "Jan 4, \(year) must be in week 1 by ISO 8601 definition")
 
-            #expect(weekDate.weekYear == year, "Jan 4, \(year) should be in year \(year)")
-            #expect(weekDate.week == 1, "Jan 4, \(year) must be in week 1 by ISO 8601 definition")
+        // Verify against Foundation
+        let calendar = Calendar(identifier: .iso8601)
+        let date = DateComponents(calendar: calendar, year: year, month: 1, day: 4).date!
+        let weekOfYear = calendar.component(.weekOfYear, from: date)
+        let yearForWeekOfYear = calendar.component(.yearForWeekOfYear, from: date)
 
-            // Verify against Foundation
-            let calendar = Calendar(identifier: .iso8601)
-            let date = DateComponents(calendar: calendar, year: year, month: 1, day: 4).date!
-            let weekOfYear = calendar.component(.weekOfYear, from: date)
-            let yearForWeekOfYear = calendar.component(.yearForWeekOfYear, from: date)
-
-            #expect(yearForWeekOfYear == year, "Foundation confirms: Jan 4, \(year) week-year is \(year)")
-            #expect(weekOfYear == 1, "Foundation confirms: Jan 4, \(year) is week 1")
-        }
+        #expect(yearForWeekOfYear == year, "Foundation confirms: Jan 4, \(year) week-year is \(year)")
+        #expect(weekOfYear == 1, "Foundation confirms: Jan 4, \(year) is week 1")
     }
 
     // MARK: - 53-Week Years
 
-    @Test("53-week year: 2020 (Jan 1 is Wednesday + leap year)")
-    func week53Year2020() throws {
-        // 2020 Jan 1 is Wednesday, and 2020 is a leap year → 53 weeks
-        let dt = try ISO_8601.DateTime(year: 2020, month: 12, day: 31)
-        let weekDate = dt.toWeekDate()
+    @Test(
+        "Weeks in year",
+        arguments: [
+            (year: 2020, expectedWeeks: 53, desc: "2020 (Jan 1 = Wed + leap year)"),
+            (year: 2015, expectedWeeks: 53, desc: "2015 (Jan 1 = Thu)"),
+            (year: 2024, expectedWeeks: 52, desc: "2024 (Jan 1 = Mon)"),
+        ]
+    )
+    func weeksInYear(year: Int, expectedWeeks: Int, desc: String) throws {
+        // Test last day of year
+        let lastDay = StandardTime.Time.Calendar.Gregorian.isLeapYear(year) ? 31 : 30
+        let dt = try ISO_8601.DateTime(year: year, month: 12, day: lastDay)
 
-        #expect(weekDate.weekYear == 2020)
-        #expect(weekDate.week == 53, "2020 should have 53 weeks")
+        if expectedWeeks == 53 {
+            let weekDate = dt.toWeekDate()
+            #expect(weekDate.weekYear == year, "\(desc) - year should have week 53")
+            #expect(weekDate.week == 53, "\(desc) - should have 53 weeks")
 
-        // Verify against Foundation
-        let calendar = Calendar(identifier: .iso8601)
-        let date = DateComponents(calendar: calendar, year: 2020, month: 12, day: 31).date!
-        let weekOfYear = calendar.component(.weekOfYear, from: date)
-
-        #expect(weekOfYear == 53, "Foundation confirms: 2020 has 53 weeks")
-    }
-
-    @Test("53-week year: 2015 (Jan 1 is Thursday)")
-    func week53Year2015() throws {
-        // 2015 Jan 1 is Thursday → 53 weeks
-        let dt = try ISO_8601.DateTime(year: 2015, month: 12, day: 31)
-        let weekDate = dt.toWeekDate()
-
-        #expect(weekDate.weekYear == 2015)
-        #expect(weekDate.week == 53, "2015 should have 53 weeks")
-
-        // Verify against Foundation
-        let calendar = Calendar(identifier: .iso8601)
-        let date = DateComponents(calendar: calendar, year: 2015, month: 12, day: 31).date!
-        let weekOfYear = calendar.component(.weekOfYear, from: date)
-
-        #expect(weekOfYear == 53, "Foundation confirms: 2015 has 53 weeks")
-    }
-
-    @Test("52-week year: 2024 (Jan 1 is Monday)")
-    func week52Year2024() throws {
-        // 2024 Jan 1 is Monday → 52 weeks
-        let dt = try ISO_8601.DateTime(year: 2024, month: 12, day: 30)
-        #expect(dt.isoWeek <= 52, "2024 should have 52 weeks")
+            // Verify against Foundation
+            let calendar = Calendar(identifier: .iso8601)
+            let date = DateComponents(calendar: calendar, year: year, month: 12, day: 31).date!
+            let weekOfYear = calendar.component(.weekOfYear, from: date)
+            #expect(weekOfYear == 53, "Foundation confirms: \(desc) has 53 weeks")
+        }
 
         // Verify weeksInYear calculation
-        let weeks = ISO_8601.DateTime.weeksInYear(2024)
-        #expect(weeks == 52, "2024 should have exactly 52 weeks")
+        let weeks = ISO_8601.DateTime.weeksInYear(year)
+        #expect(weeks == expectedWeeks, "\(desc) should have exactly \(expectedWeeks) weeks")
     }
 
     // MARK: - Weekday Numbering (ISO vs Gregorian)
@@ -268,25 +224,31 @@ struct FoundationComparisonTests {
 
     // MARK: - Round-Trip Tests
 
-    @Test("Round-trip: Calendar date → Week date → Calendar date")
-    func roundTripCalendarToWeekDate() throws {
-        let original = try ISO_8601.DateTime(year: 2024, month: 6, day: 15)
+    @Test(
+        "Round-trip conversions",
+        arguments: [
+            (year: 2024, month: 6, day: 15, desc: "mid-year date"),
+            (year: 2023, month: 1, day: 1, desc: "year boundary (Sun)"),
+            (year: 2024, month: 1, day: 1, desc: "year boundary (Mon)"),
+            (year: 2024, month: 2, day: 29, desc: "leap day"),
+            (year: 2024, month: 12, day: 31, desc: "year end"),
+        ]
+    )
+    func roundTripConversions(year: Int, month: Int, day: Int, desc: String) throws {
+        let original = try ISO_8601.DateTime(year: year, month: month, day: day)
+
+        // Calendar → Week Date → Calendar
         let weekDate = original.toWeekDate()
-        let reconstituted = weekDate.toDateTime()
+        let fromWeekDate = weekDate.toDateTime()
+        #expect(fromWeekDate.components.year == year, "\(desc) - week date year")
+        #expect(fromWeekDate.components.month == month, "\(desc) - week date month")
+        #expect(fromWeekDate.components.day == day, "\(desc) - week date day")
 
-        #expect(reconstituted.components.year == 2024)
-        #expect(reconstituted.components.month == 6)
-        #expect(reconstituted.components.day == 15)
-    }
-
-    @Test("Round-trip: Calendar date → Ordinal date → Calendar date")
-    func roundTripCalendarToOrdinalDate() throws {
-        let original = try ISO_8601.DateTime(year: 2024, month: 6, day: 15)
+        // Calendar → Ordinal Date → Calendar
         let ordinal = original.toOrdinalDate()
-        let reconstituted = ordinal.toDateTime()
-
-        #expect(reconstituted.components.year == 2024)
-        #expect(reconstituted.components.month == 6)
-        #expect(reconstituted.components.day == 15)
+        let fromOrdinal = ordinal.toDateTime()
+        #expect(fromOrdinal.components.year == year, "\(desc) - ordinal year")
+        #expect(fromOrdinal.components.month == month, "\(desc) - ordinal month")
+        #expect(fromOrdinal.components.day == day, "\(desc) - ordinal day")
     }
 }

@@ -23,27 +23,18 @@ struct `ISO_8601.WeekDate Tests` {
         #expect(weekDate.weekday == 1)
     }
 
-    @Test
-    func `Create week date for all weekdays`() throws {
-        for weekday in 1...7 {
-            let weekDate = try ISO_8601.WeekDate(weekYear: 2024, week: 1, weekday: weekday)
-            #expect(weekDate.weekday == weekday)
-        }
+    @Test(arguments: [1, 2, 3, 4, 5, 6, 7])
+    func `Create week date for all weekdays`(weekday: Int) throws {
+        let weekDate = try ISO_8601.WeekDate(weekYear: 2024, week: 1, weekday: weekday)
+        #expect(weekDate.weekday == weekday)
     }
 
     // MARK: - Validation
 
-    @Test
-    func `Reject invalid weekday 0`() throws {
+    @Test(arguments: [0, 8, -1, 10])
+    func `Reject invalid weekday`(weekday: Int) throws {
         #expect(throws: ISO_8601.Date.Error.self) {
-            _ = try ISO_8601.WeekDate(weekYear: 2024, week: 1, weekday: 0)
-        }
-    }
-
-    @Test
-    func `Reject invalid weekday 8`() throws {
-        #expect(throws: ISO_8601.Date.Error.self) {
-            _ = try ISO_8601.WeekDate(weekYear: 2024, week: 1, weekday: 8)
+            _ = try ISO_8601.WeekDate(weekYear: 2024, week: 1, weekday: weekday)
         }
     }
 
