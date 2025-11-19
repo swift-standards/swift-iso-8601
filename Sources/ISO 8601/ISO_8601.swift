@@ -44,11 +44,11 @@
 /// let parsed = try ISO_8601.DateTime.Parser.parse("2024-01-15T12:30:00Z")
 ///
 /// // Week date
-/// let weekDate = dt.toWeekDate()
+/// let weekDate = ISO_8601.WeekDate(dt)
 /// // 2024-W03-1 (Week 3, Monday)
 ///
 /// // Ordinal date
-/// let ordinal = dt.toOrdinalDate()
+/// let ordinal = ISO_8601.OrdinalDate(dt)
 /// // 2024-015 (15th day of year)
 /// ```
 public enum ISO_8601 {}

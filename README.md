@@ -136,11 +136,11 @@ let formatted = ISO_8601.DateTime.Formatter.format(
 let parsed = try ISO_8601.DateTime.Parser.parse("2024-01-15T12:30:00Z")
 
 // Convert to week date
-let weekDate = dt.toWeekDate()
+let weekDate = ISO_8601.WeekDate(dt)
 // ISO_8601.WeekDate(weekYear: 2024, week: 3, weekday: 1)
 
 // Convert to ordinal date
-let ordinal = dt.toOrdinalDate()
+let ordinal = ISO_8601.OrdinalDate(dt)
 // ISO_8601.OrdinalDate(year: 2024, day: 15)
 ```
 

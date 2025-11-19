@@ -339,28 +339,6 @@ extension ISO_8601.DateTime {
     }
 }
 
-// MARK: - Conversion to Other ISO 8601 Representations
-
-extension ISO_8601.DateTime {
-    /// Convert to week date representation
-    public func toWeekDate() -> ISO_8601.WeekDate {
-        ISO_8601.WeekDate(
-            uncheckedWeekYear: isoWeekYear,
-            week: isoWeek,
-            weekday: isoWeekday
-        )
-    }
-
-    /// Convert to ordinal date representation
-    public func toOrdinalDate() -> ISO_8601.OrdinalDate {
-        let comp = components
-        return ISO_8601.OrdinalDate(
-            uncheckedYear: comp.year,
-            day: ordinalDay
-        )
-    }
-}
-
 // MARK: - Formatter
 
 extension ISO_8601.DateTime {
@@ -745,7 +723,7 @@ extension ISO_8601.DateTime {
                 }
 
                 let weekDate = try ISO_8601.WeekDate(weekYear: weekYear, week: week, weekday: weekday)
-                let dateTime = weekDate.toDateTime()
+                let dateTime = ISO_8601.DateTime(weekDate)
                 let comp = dateTime.components
                 return (comp.year, comp.month, comp.day)
             } else {
@@ -776,7 +754,7 @@ extension ISO_8601.DateTime {
                 }
 
                 let weekDate = try ISO_8601.WeekDate(weekYear: weekYear, week: week, weekday: weekday)
-                let dateTime = weekDate.toDateTime()
+                let dateTime = ISO_8601.DateTime(weekDate)
                 let comp = dateTime.components
                 return (comp.year, comp.month, comp.day)
             }
@@ -798,7 +776,7 @@ extension ISO_8601.DateTime {
                 }
 
                 let ordinal = try ISO_8601.OrdinalDate(year: year, day: ordinalDay)
-                let dateTime = ordinal.toDateTime()
+                let dateTime = ISO_8601.DateTime(ordinal)
                 let comp = dateTime.components
                 return (comp.year, comp.month, comp.day)
             } else {
@@ -818,7 +796,7 @@ extension ISO_8601.DateTime {
                 }
 
                 let ordinal = try ISO_8601.OrdinalDate(year: year, day: ordinalDay)
-                let dateTime = ordinal.toDateTime()
+                let dateTime = ISO_8601.DateTime(ordinal)
                 let comp = dateTime.components
                 return (comp.year, comp.month, comp.day)
             }

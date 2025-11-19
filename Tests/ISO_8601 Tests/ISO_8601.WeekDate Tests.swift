@@ -58,7 +58,7 @@ struct `ISO_8601.WeekDate Tests` {
     @Test
     func `Convert week date to datetime`() throws {
         let weekDate = try ISO_8601.WeekDate(weekYear: 2024, week: 1, weekday: 1)
-        let dateTime = weekDate.toDateTime()
+        let dateTime = ISO_8601.DateTime(weekDate)
 
         let comp = dateTime.components
         #expect(comp.year == 2024 || comp.year == 2023)  // Week 1 might start in previous year
@@ -67,7 +67,7 @@ struct `ISO_8601.WeekDate Tests` {
     @Test
     func `Week date conversion produces correct weekday`() throws {
         let weekDate = try ISO_8601.WeekDate(weekYear: 2024, week: 3, weekday: 2)
-        let dateTime = weekDate.toDateTime()
+        let dateTime = ISO_8601.DateTime(weekDate)
 
         #expect(dateTime.isoWeekday == 2)
     }
@@ -77,8 +77,8 @@ struct `ISO_8601.WeekDate Tests` {
     @Test
     func `Round-trip datetime to week date`() throws {
         let original = try ISO_8601.DateTime(year: 2024, month: 1, day: 15)
-        let weekDate = original.toWeekDate()
-        let converted = weekDate.toDateTime()
+        let weekDate = ISO_8601.WeekDate(original)
+        let converted = ISO_8601.DateTime(weekDate)
 
         // Should be the same date
         #expect(original.components.year == converted.components.year)

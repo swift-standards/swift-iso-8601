@@ -29,7 +29,7 @@ struct FoundationComparisonTests {
         desc: String
     ) throws {
         let dt = try ISO_8601.DateTime(year: year, month: month, day: day)
-        let weekDate = dt.toWeekDate()
+        let weekDate = ISO_8601.WeekDate(dt)
 
         #expect(weekDate.weekYear == weekYear, "\(desc) - week-year")
         #expect(weekDate.week == week, "\(desc) - week number")
@@ -53,7 +53,7 @@ struct FoundationComparisonTests {
     )
     func january4AlwaysWeek1(year: Int) throws {
         let dt = try ISO_8601.DateTime(year: year, month: 1, day: 4)
-        let weekDate = dt.toWeekDate()
+        let weekDate = ISO_8601.WeekDate(dt)
 
         #expect(weekDate.weekYear == year, "Jan 4, \(year) should be in year \(year)")
         #expect(weekDate.week == 1, "Jan 4, \(year) must be in week 1 by ISO 8601 definition")
@@ -84,7 +84,7 @@ struct FoundationComparisonTests {
         let dt = try ISO_8601.DateTime(year: year, month: 12, day: lastDay)
 
         if expectedWeeks == 53 {
-            let weekDate = dt.toWeekDate()
+            let weekDate = ISO_8601.WeekDate(dt)
             #expect(weekDate.weekYear == year, "\(desc) - year should have week 53")
             #expect(weekDate.week == 53, "\(desc) - should have 53 weeks")
 
@@ -132,11 +132,11 @@ struct FoundationComparisonTests {
         let dt = try ISO_8601.DateTime(year: 2024, month: 2, day: 29)
         #expect(dt.ordinalDay == 60, "Feb 29 in leap year should be day 60")
 
-        let ordinal = dt.toOrdinalDate()
+        let ordinal = ISO_8601.OrdinalDate(dt)
         #expect(ordinal.day == 60)
 
         // Round-trip
-        let reconstituted = ordinal.toDateTime()
+        let reconstituted = ISO_8601.DateTime(ordinal)
         #expect(reconstituted.components.month == 2)
         #expect(reconstituted.components.day == 29)
     }
@@ -144,7 +144,7 @@ struct FoundationComparisonTests {
     @Test("Ordinal date: Day 60 in common year is March 1")
     func ordinalDateCommonYearDay60() throws {
         let ordinal = try ISO_8601.OrdinalDate(year: 2023, day: 60)
-        let dt = ordinal.toDateTime()
+        let dt = ISO_8601.DateTime(ordinal)
 
         #expect(dt.components.month == 3, "Day 60 in common year should be March")
         #expect(dt.components.day == 1, "Day 60 in common year should be March 1")
@@ -154,7 +154,7 @@ struct FoundationComparisonTests {
     func ordinalDateDay366() throws {
         // Valid in leap year
         let leapYearOrdinal = try ISO_8601.OrdinalDate(year: 2024, day: 366)
-        let dt = leapYearOrdinal.toDateTime()
+        let dt = ISO_8601.DateTime(leapYearOrdinal)
         #expect(dt.components.month == 12)
         #expect(dt.components.day == 31)
 
@@ -238,15 +238,15 @@ struct FoundationComparisonTests {
         let original = try ISO_8601.DateTime(year: year, month: month, day: day)
 
         // Calendar → Week Date → Calendar
-        let weekDate = original.toWeekDate()
-        let fromWeekDate = weekDate.toDateTime()
+        let weekDate = ISO_8601.WeekDate(original)
+        let fromWeekDate = ISO_8601.DateTime(weekDate)
         #expect(fromWeekDate.components.year == year, "\(desc) - week date year")
         #expect(fromWeekDate.components.month == month, "\(desc) - week date month")
         #expect(fromWeekDate.components.day == day, "\(desc) - week date day")
 
         // Calendar → Ordinal Date → Calendar
-        let ordinal = original.toOrdinalDate()
-        let fromOrdinal = ordinal.toDateTime()
+        let ordinal = ISO_8601.OrdinalDate(original)
+        let fromOrdinal = ISO_8601.DateTime(ordinal)
         #expect(fromOrdinal.components.year == year, "\(desc) - ordinal year")
         #expect(fromOrdinal.components.month == month, "\(desc) - ordinal month")
         #expect(fromOrdinal.components.day == day, "\(desc) - ordinal day")

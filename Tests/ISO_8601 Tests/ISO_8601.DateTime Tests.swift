@@ -179,7 +179,7 @@ struct `ISO_8601.DateTime Tests` {
     @Test
     func `Convert to week date`() throws {
         let dateTime = try ISO_8601.DateTime(year: 2024, month: 1, day: 15)
-        let weekDate = dateTime.toWeekDate()
+        let weekDate = ISO_8601.WeekDate(dateTime)
 
         #expect(weekDate.weekYear == 2024)
         #expect(weekDate.week > 0)
@@ -189,7 +189,7 @@ struct `ISO_8601.DateTime Tests` {
     @Test
     func `Convert to ordinal date`() throws {
         let dateTime = try ISO_8601.DateTime(year: 2024, month: 2, day: 8)
-        let ordinal = dateTime.toOrdinalDate()
+        let ordinal = ISO_8601.OrdinalDate(dateTime)
 
         #expect(ordinal.year == 2024)
         #expect(ordinal.day == 39)

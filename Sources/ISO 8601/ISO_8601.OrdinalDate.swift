@@ -21,7 +21,7 @@ extension ISO_8601 {
     /// ## Example
     /// ```swift
     /// let ordinal = ISO_8601.OrdinalDate(year: 2024, day: 39)
-    /// let dateTime = ordinal.toDateTime()
+    /// let dateTime = ISO_8601.DateTime(ordinal)
     /// // February 8, 2024
     /// ```
     public struct OrdinalDate: Sendable, Equatable, Hashable {
@@ -53,36 +53,51 @@ extension ISO_8601 {
             self.day = day
         }
 
-        /// Convert ordinal date to calendar date (DateTime)
+        /// Initialize ordinal date from calendar date (DateTime)
         ///
-        /// Calculates the month and day-of-month for this ordinal day.
-        /// The time components will be 00:00:00 UTC.
-        public func toDateTime() -> ISO_8601.DateTime {
-            // Calculate month and day from ordinal day
-            let monthDays = StandardTime.Time.Calendar.Gregorian.daysInMonths(year: year)
-            var remainingDays = day - 1  // 0-indexed for calculation
-            var month = 1
-
-            for daysInMonth in monthDays {
-                if remainingDays < daysInMonth {
-                    break
-                }
-                remainingDays -= daysInMonth
-                month += 1
-            }
-
-            let dayOfMonth = remainingDays + 1
-
-            // Create DateTime (won't throw because we validated the ordinal day)
-            return try! ISO_8601.DateTime(
-                year: year,
-                month: month,
-                day: dayOfMonth,
-                hour: 0,
-                minute: 0,
-                second: 0,
-                timezoneOffsetSeconds: 0
+        /// Converts a DateTime to its ordinal date representation.
+        public init(_ dateTime: ISO_8601.DateTime) {
+            let comp = dateTime.components
+            self.init(
+                uncheckedYear: comp.year,
+                day: dateTime.ordinalDay
             )
         }
+    }
+}
+
+// MARK: - DateTime Conversion
+
+extension ISO_8601.DateTime {
+    /// Initialize DateTime from ordinal date
+    ///
+    /// Calculates the month and day-of-month for an ordinal day.
+    /// The time components will be 00:00:00 UTC.
+    public init(_ ordinalDate: ISO_8601.OrdinalDate) {
+        // Calculate month and day from ordinal day
+        let monthDays = StandardTime.Time.Calendar.Gregorian.daysInMonths(year: ordinalDate.year)
+        var remainingDays = ordinalDate.day - 1  // 0-indexed for calculation
+        var month = 1
+
+        for daysInMonth in monthDays {
+            if remainingDays < daysInMonth {
+                break
+            }
+            remainingDays -= daysInMonth
+            month += 1
+        }
+
+        let dayOfMonth = remainingDays + 1
+
+        // Create DateTime (won't throw because ordinal day was validated)
+        self = try! ISO_8601.DateTime(
+            year: ordinalDate.year,
+            month: month,
+            day: dayOfMonth,
+            hour: 0,
+            minute: 0,
+            second: 0,
+            timezoneOffsetSeconds: 0
+        )
     }
 }

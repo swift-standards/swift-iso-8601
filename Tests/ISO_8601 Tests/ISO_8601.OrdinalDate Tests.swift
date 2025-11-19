@@ -71,7 +71,7 @@ struct `ISO_8601.OrdinalDate Tests` {
     @Test
     func `Convert ordinal day 1 to datetime`() throws {
         let ordinal = try ISO_8601.OrdinalDate(year: 2024, day: 1)
-        let dateTime = ordinal.toDateTime()
+        let dateTime = ISO_8601.DateTime(ordinal)
 
         let comp = dateTime.components
         #expect(comp.year == 2024)
@@ -82,7 +82,7 @@ struct `ISO_8601.OrdinalDate Tests` {
     @Test
     func `Convert ordinal day 39 to datetime`() throws {
         let ordinal = try ISO_8601.OrdinalDate(year: 2024, day: 39)
-        let dateTime = ordinal.toDateTime()
+        let dateTime = ISO_8601.DateTime(ordinal)
 
         let comp = dateTime.components
         #expect(comp.year == 2024)
@@ -93,7 +93,7 @@ struct `ISO_8601.OrdinalDate Tests` {
     @Test
     func `Convert ordinal day 365 to datetime in common year`() throws {
         let ordinal = try ISO_8601.OrdinalDate(year: 2023, day: 365)
-        let dateTime = ordinal.toDateTime()
+        let dateTime = ISO_8601.DateTime(ordinal)
 
         let comp = dateTime.components
         #expect(comp.year == 2023)
@@ -104,7 +104,7 @@ struct `ISO_8601.OrdinalDate Tests` {
     @Test
     func `Convert ordinal day 366 to datetime in leap year`() throws {
         let ordinal = try ISO_8601.OrdinalDate(year: 2024, day: 366)
-        let dateTime = ordinal.toDateTime()
+        let dateTime = ISO_8601.DateTime(ordinal)
 
         let comp = dateTime.components
         #expect(comp.year == 2024)
@@ -117,8 +117,8 @@ struct `ISO_8601.OrdinalDate Tests` {
     @Test
     func `Round-trip datetime to ordinal date`() throws {
         let original = try ISO_8601.DateTime(year: 2024, month: 2, day: 8)
-        let ordinal = original.toOrdinalDate()
-        let converted = ordinal.toDateTime()
+        let ordinal = ISO_8601.OrdinalDate(original)
+        let converted = ISO_8601.DateTime(ordinal)
 
         #expect(original.components.year == converted.components.year)
         #expect(original.components.month == converted.components.month)
@@ -128,8 +128,8 @@ struct `ISO_8601.OrdinalDate Tests` {
     @Test(arguments: [1, 32, 60, 100, 200, 300, 365])
     func `Round-trip all days in year`(day: Int) throws {
         let ordinal = try ISO_8601.OrdinalDate(year: 2023, day: day)
-        let dateTime = ordinal.toDateTime()
-        let roundTrip = dateTime.toOrdinalDate()
+        let dateTime = ISO_8601.DateTime(ordinal)
+        let roundTrip = ISO_8601.OrdinalDate(dateTime)
 
         #expect(roundTrip.year == ordinal.year, "Day \(day) - year")
         #expect(roundTrip.day == ordinal.day, "Day \(day) - day")

@@ -40,7 +40,7 @@ struct `ISO_8601.Parser Tests` {
     func `Parse week date extended`() throws {
         let dt = try ISO_8601.DateTime.Parser.parse("2024-W03-1")
 
-        let weekDate = dt.toWeekDate()
+        let weekDate = ISO_8601.WeekDate(dt)
         #expect(weekDate.weekYear == 2024)
         #expect(weekDate.week == 3)
         #expect(weekDate.weekday == 1)
@@ -50,7 +50,7 @@ struct `ISO_8601.Parser Tests` {
     func `Parse week date basic`() throws {
         let dt = try ISO_8601.DateTime.Parser.parse("2024W031")
 
-        let weekDate = dt.toWeekDate()
+        let weekDate = ISO_8601.WeekDate(dt)
         #expect(weekDate.weekYear == 2024)
         #expect(weekDate.week == 3)
         #expect(weekDate.weekday == 1)
@@ -62,7 +62,7 @@ struct `ISO_8601.Parser Tests` {
     func `Parse ordinal date extended`() throws {
         let dt = try ISO_8601.DateTime.Parser.parse("2024-039")
 
-        let ordinal = dt.toOrdinalDate()
+        let ordinal = ISO_8601.OrdinalDate(dt)
         #expect(ordinal.year == 2024)
         #expect(ordinal.day == 39)
     }
@@ -71,7 +71,7 @@ struct `ISO_8601.Parser Tests` {
     func `Parse ordinal date basic`() throws {
         let dt = try ISO_8601.DateTime.Parser.parse("2024039")
 
-        let ordinal = dt.toOrdinalDate()
+        let ordinal = ISO_8601.OrdinalDate(dt)
         #expect(ordinal.year == 2024)
         #expect(ordinal.day == 39)
     }
