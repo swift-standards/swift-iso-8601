@@ -5,6 +5,8 @@
 //  ISO 8601 date-time format implementation
 //
 
+@_exported import StandardTime
+
 /// ISO 8601 date and time format
 ///
 /// Implements the ISO 8601:2019 standard for representing dates and times.

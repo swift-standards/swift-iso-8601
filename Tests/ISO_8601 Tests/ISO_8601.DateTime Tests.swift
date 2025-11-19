@@ -259,7 +259,8 @@ struct `ISO_8601.DateTime Tests` {
 
     @Test
     func `Rejects February 29 in common year`() throws {
-        #expect(throws: ISO_8601.Date.Error.self) {
+        // Calendar validation delegated to Time - expect Time.Error
+        #expect(throws: Time.Error.self) {
             _ = try ISO_8601.DateTime(year: 2023, month: 2, day: 29)
         }
     }

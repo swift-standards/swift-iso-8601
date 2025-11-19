@@ -65,7 +65,7 @@ extension ISO_8601 {
             let microsecond = remaining / 1000
             let nanosecond = remaining % 1000
 
-            var baseTime = StandardTime.Time(secondsSinceEpoch: secondsSinceEpoch)
+            let baseTime = StandardTime.Time(secondsSinceEpoch: secondsSinceEpoch)
             let time = StandardTime.Time(
                 year: baseTime.year,
                 month: baseTime.month,

@@ -50,6 +50,7 @@ let package = Package(
             name: .iso8601.tests,
             dependencies: [
                 .iso8601,
+                .time,  // Needed for Time.Error in test expectations
                 .incits_4_1986,
                 .standardsTestSupport
             ]
