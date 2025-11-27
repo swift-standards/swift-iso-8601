@@ -7,6 +7,7 @@
 
 import Testing
 import Foundation
+import StandardTime
 @testable import ISO_8601
 
 @Suite

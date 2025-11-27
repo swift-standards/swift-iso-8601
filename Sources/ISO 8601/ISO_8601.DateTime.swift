@@ -6,7 +6,7 @@
 //
 
 import Standards
-import StandardTime
+public import StandardTime
 
 extension ISO_8601 {
 
@@ -969,7 +969,7 @@ extension ISO_8601.DateTime: Codable {
         case timezoneOffsetSeconds
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let seconds = try container.decode(Int.self, forKey: .secondsSinceEpoch)
         let nanos = try container.decodeIfPresent(Int.self, forKey: .nanoseconds) ?? 0
@@ -977,7 +977,7 @@ extension ISO_8601.DateTime: Codable {
         try self.init(secondsSinceEpoch: seconds, nanoseconds: nanos, timezoneOffsetSeconds: offset)
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(secondsSinceEpoch, forKey: .secondsSinceEpoch)
         if nanoseconds != 0 {

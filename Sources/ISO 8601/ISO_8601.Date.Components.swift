@@ -8,7 +8,6 @@
 import StandardTime
 
 extension ISO_8601.Date {
-    
     /// Date components extracted from a date-time
     ///
     /// ISO 8601 calendar date components follow the Gregorian calendar.

@@ -6,16 +6,13 @@ extension String {
     static let iso8601: Self = "ISO 8601"
 }
 
-extension String { var tests: Self { self + " Tests" } }
-
 extension Target.Dependency {
     static var iso8601: Self { .target(name: .iso8601) }
     static var standards: Self { .product(name: "Standards", package: "swift-standards") }
     static var time: Self {
         .product(
-            name: "Time",
-            package: "swift-standards",
-            moduleAliases: ["Time": "StandardTime"]
+            name: "StandardTime",
+            package: "swift-standards"
         )
     }
     static var incits_4_1986: Self { .product(name: "INCITS 4 1986", package: "swift-incits-4-1986") }
@@ -58,3 +55,17 @@ let package = Package(
     ],
     swiftLanguageModes: [.v6]
 )
+
+extension String {
+    var tests: Self { self + " Tests" }
+    var foundation: Self { self + " Foundation" }
+}
+
+for target in package.targets where ![.system, .binary, .plugin].contains(target.type) {
+    let existing = target.swiftSettings ?? []
+    target.swiftSettings = existing + [
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("MemberImportVisibility")
+    ]
+}
