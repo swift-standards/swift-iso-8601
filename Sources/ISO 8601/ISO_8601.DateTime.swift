@@ -5,8 +5,8 @@
 //  Core date-time representation following ISO 8601:2019
 //
 
-import Standards
 public import StandardTime
+import Standards
 
 extension ISO_8601 {
 
@@ -167,7 +167,7 @@ extension ISO_8601.DateTime {
     public init(
         year: Int,
         month: Int,  // 1-12
-        day: Int,    // 1-31
+        day: Int,  // 1-31
         hour: Int = 0,
         minute: Int = 0,
         second: Int = 0,
@@ -268,8 +268,11 @@ extension ISO_8601.DateTime {
         // ISO weekday: 1=Monday, 7=Sunday
         let isoDay = isoWeekday
         let daysSinceMonday = isoDay - 1
-        let currentTime = try! StandardTime.Time(year: comp.year, month: comp.month, day: comp.day, hour: 0, minute: 0, second: 0)
-        let mondayOfWeek = currentTime.secondsSinceEpoch / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay - daysSinceMonday
+        let currentTime = try! StandardTime.Time(
+            year: comp.year, month: comp.month, day: comp.day, hour: 0, minute: 0, second: 0)
+        let mondayOfWeek =
+            currentTime.secondsSinceEpoch / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
+            - daysSinceMonday
 
         // Find January 4th of this year (which is always in week 1)
         let jan4Time = try! StandardTime.Time(year: comp.year, month: 1, day: 4, hour: 0, minute: 0, second: 0)
@@ -327,11 +330,11 @@ extension ISO_8601.DateTime {
         }
         let jan1ISOWeekday = jan1Weekday == 0 ? 7 : jan1Weekday
 
-        if jan1ISOWeekday == 4 { // Thursday
+        if jan1ISOWeekday == 4 {  // Thursday
             return 53
         }
 
-        if jan1ISOWeekday == 3 && StandardTime.Time.Calendar.Gregorian.isLeapYear(year) { // Wednesday and leap year
+        if jan1ISOWeekday == 3 && StandardTime.Time.Calendar.Gregorian.isLeapYear(year) {  // Wednesday and leap year
             return 53
         }
 
@@ -356,22 +359,22 @@ extension ISO_8601.DateTime {
     public enum Formatter {
         /// Date format options
         public enum DateFormat {
-            case calendar(extended: Bool)    // YYYY-MM-DD or YYYYMMDD
-            case week(extended: Bool)        // YYYY-Www-D or YYYYWwwD
-            case ordinal(extended: Bool)     // YYYY-DDD or YYYYDDD
+            case calendar(extended: Bool)  // YYYY-MM-DD or YYYYMMDD
+            case week(extended: Bool)  // YYYY-Www-D or YYYYWwwD
+            case ordinal(extended: Bool)  // YYYY-DDD or YYYYDDD
         }
 
         /// Time format options
         public enum TimeFormat {
             case none
-            case time(extended: Bool)        // HH:MM:SS or HHMMSS
+            case time(extended: Bool)  // HH:MM:SS or HHMMSS
         }
 
         /// Timezone format options
         public enum TimezoneFormat {
             case none
-            case utc                         // Z
-            case offset(extended: Bool)      // +05:30 or +0530
+            case utc  // Z
+            case offset(extended: Bool)  // +05:30 or +0530
         }
 
         /// Format a DateTime as ISO 8601 string
@@ -500,7 +503,9 @@ extension ISO_8601.DateTime {
             let sign = offsetSeconds >= 0 ? "+" : "-"
             let absOffset = abs(offsetSeconds)
             let hours = absOffset / Time.Calendar.Gregorian.TimeConstants.secondsPerHour
-            let minutes = (absOffset % Time.Calendar.Gregorian.TimeConstants.secondsPerHour) / Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
+            let minutes =
+                (absOffset % Time.Calendar.Gregorian.TimeConstants.secondsPerHour)
+                / Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
 
             let hoursStr = formatTwoDigits(hours)
             let minutesStr = formatTwoDigits(minutes)
@@ -606,7 +611,8 @@ extension ISO_8601.DateTime {
                 )
                 // Add one day (86400 seconds)
                 return try ISO_8601.DateTime(
-                    secondsSinceEpoch: nextDayDateTime.secondsSinceEpoch + Time.Calendar.Gregorian.TimeConstants.secondsPerDay,
+                    secondsSinceEpoch: nextDayDateTime.secondsSinceEpoch
+                        + Time.Calendar.Gregorian.TimeConstants.secondsPerDay,
                     nanoseconds: 0,
                     timezoneOffsetSeconds: timezoneOffset
                 )
@@ -804,7 +810,9 @@ extension ISO_8601.DateTime {
 
         // MARK: - Time Parsing
 
-        private static func parseTime(_ value: String) throws -> (hour: Int, minute: Int, second: Int, nanoseconds: Int, timezoneOffset: Int) {
+        private static func parseTime(
+            _ value: String
+        ) throws -> (hour: Int, minute: Int, second: Int, nanoseconds: Int, timezoneOffset: Int) {
             // Extract timezone portion (Z, +HH:MM, -HH:MM, etc.)
             var timePart = value
             var timezoneOffset = 0
@@ -938,7 +946,9 @@ extension ISO_8601.DateTime {
                     throw ISO_8601.Date.Error.invalidTimezone(value)
                 }
 
-                let offset = hours * Time.Calendar.Gregorian.TimeConstants.secondsPerHour + minutes * Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
+                let offset =
+                    hours * Time.Calendar.Gregorian.TimeConstants.secondsPerHour + minutes
+                    * Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
                 return positive ? offset : -offset
             } else {
                 // Basic format: HHMM
@@ -953,7 +963,9 @@ extension ISO_8601.DateTime {
                     throw ISO_8601.Date.Error.invalidTimezone(value)
                 }
 
-                let offset = hours * Time.Calendar.Gregorian.TimeConstants.secondsPerHour + minutes * Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
+                let offset =
+                    hours * Time.Calendar.Gregorian.TimeConstants.secondsPerHour + minutes
+                    * Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
                 return positive ? offset : -offset
             }
         }
@@ -994,4 +1006,3 @@ extension ISO_8601.DateTime: CustomStringConvertible {
         Formatter.format(self)
     }
 }
-

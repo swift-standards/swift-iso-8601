@@ -15,14 +15,14 @@ extension ISO_8601.Date {
     /// ISO 8601 calendar dates don't include day names.
     public struct Components: Sendable, Equatable {
         public let year: Int
-        public let month: Int      // 1-12
-        public let day: Int        // 1-31
-        public let hour: Int       // 0-23
-        public let minute: Int     // 0-59
-        public let second: Int     // 0-60 (allowing leap second)
+        public let month: Int  // 1-12
+        public let day: Int  // 1-31
+        public let hour: Int  // 0-23
+        public let minute: Int  // 0-59
+        public let second: Int  // 0-60 (allowing leap second)
         public let nanoseconds: Int  // 0-999,999,999
-        public let weekday: Int    // 0=Sunday, 6=Saturday (internal, Zeller's)
-        
+        public let weekday: Int  // 0=Sunday, 6=Saturday (internal, Zeller's)
+
         /// Creates date components with validation
         /// - Throws: `ISO_8601.Date.Error` if any component is out of valid range
         ///
@@ -82,7 +82,7 @@ extension ISO_8601.Date {
 }
 
 extension ISO_8601.Date.Components {
-    
+
     /// Creates date components without validation (internal use only)
     ///
     /// This initializer bypasses validation and should only be used when component values
@@ -125,12 +125,12 @@ extension ISO_8601.Date.Components {
             return 0
         }
     }
-    
+
     /// Returns true if the year is a leap year
     private static func isLeapYear(_ year: Int) -> Bool {
         (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
     }
-    
+
     /// Compute weekday using Zeller's congruence
     /// Returns 0=Sunday, 1=Monday, ..., 6=Saturday
     private static func computeWeekday(year: Int, month: Int, day: Int) -> Int {
@@ -141,9 +141,9 @@ extension ISO_8601.Date.Components {
         let q = day
         let k = y % 100
         let j = y / 100
-        
+
         let h = (q + ((13 * (m + 1)) / 5) + k + (k / 4) + (j / 4) - (2 * j)) % 7
-        
+
         // Zeller's returns 0=Saturday, convert to 0=Sunday
         return (h + 6) % 7
     }

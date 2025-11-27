@@ -5,7 +5,7 @@
 //  ISO 8601 date-time format implementation
 //
 
-//@_exported import struct StandardTime.Time
+// @_exported import struct StandardTime.Time
 
 /// ISO 8601 date and time format
 ///

@@ -5,8 +5,9 @@
 //  Tests for ISO_8601.Time
 //
 
-import Testing
 import Foundation
+import Testing
+
 @testable import ISO_8601
 
 @Suite
@@ -382,7 +383,7 @@ struct `ISO_8601.Time Tests` {
 
     @Test
     func `Time decodes from JSON string`() throws {
-        let json = "\"12:30:45Z\"".data(using: .utf8)!
+        let json = Data("\"12:30:45Z\"".utf8)
         let decoder = JSONDecoder()
         let time = try decoder.decode(ISO_8601.Time.self, from: json)
 

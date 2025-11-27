@@ -72,8 +72,9 @@ extension ISO_8601 {
             // If hour is 24, only 24:00:00.0 is valid
             if hour == 24 {
                 guard minute == nil || minute == 0,
-                      second == nil || second == 0,
-                      nanoseconds == 0 else {
+                    second == nil || second == 0,
+                    nanoseconds == 0
+                else {
                     throw ISO_8601.Date.Error.invalidTime("24:xx:xx is not valid, only 24:00:00 is allowed")
                 }
             }
@@ -188,7 +189,9 @@ extension ISO_8601.Time {
             let sign = offsetSeconds >= 0 ? "+" : "-"
             let absOffset = abs(offsetSeconds)
             let hours = absOffset / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerHour
-            let minutes = (absOffset % StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerHour) / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
+            let minutes =
+                (absOffset % StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerHour)
+                / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
 
             let hoursStr = hours < 10 ? "0\(hours)" : "\(hours)"
             let minutesStr = minutes < 10 ? "0\(minutes)" : "\(minutes)"
@@ -215,7 +218,7 @@ extension ISO_8601.Time {
         public static func parse(_ value: String) throws -> ISO_8601.Time {
             // Extract timezone portion (Z, +HH:MM, -HH:MM, etc.)
             var timePart = value
-            var timezoneOffset: Int? = nil
+            var timezoneOffset: Int?
 
             if value.hasSuffix("Z") {
                 timePart = String(value.dropLast())
@@ -231,8 +234,8 @@ extension ISO_8601.Time {
             }
 
             var hour: Int
-            var minute: Int? = nil
-            var second: Int? = nil
+            var minute: Int?
+            var second: Int?
             var nanoseconds = 0
 
             if timePart.contains(":") {
@@ -414,7 +417,9 @@ extension ISO_8601.Time {
                 minutes = m
             }
 
-            let offset = hours * StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerHour + minutes * StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
+            let offset =
+                hours * StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerHour + minutes
+                * StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
             return positive ? offset : -offset
         }
     }

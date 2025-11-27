@@ -5,8 +5,9 @@
 //  Tests for ISO_8601.Interval
 //
 
-import Testing
 import Foundation
+import Testing
+
 @testable import ISO_8601
 
 @Suite
@@ -319,7 +320,7 @@ struct `ISO_8601.Interval Tests` {
 
     @Test
     func `Interval decodes from JSON string`() throws {
-        let json = "\"P3D\"".data(using: .utf8)!
+        let json = Data("\"P3D\"".utf8)
         let decoder = JSONDecoder()
         let interval = try decoder.decode(ISO_8601.Interval.self, from: json)
 

@@ -106,7 +106,8 @@ extension ISO_8601.Interval {
             // Split on slash
             let parts = value.split(separator: "/", maxSplits: 1).map(String.init)
             guard parts.count == 2 else {
-                throw ISO_8601.Date.Error.invalidFormat("Interval must have format: start/end, start/duration, or duration/end")
+                throw ISO_8601.Date.Error.invalidFormat(
+                    "Interval must have format: start/end, start/duration, or duration/end")
             }
 
             let first = parts[0]

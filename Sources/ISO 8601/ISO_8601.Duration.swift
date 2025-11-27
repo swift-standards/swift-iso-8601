@@ -84,8 +84,7 @@ extension ISO_8601 {
 
         /// Check if this duration represents zero time
         public var isZero: Bool {
-            years == 0 && months == 0 && days == 0 &&
-            hours == 0 && minutes == 0 && seconds == 0 && nanoseconds == 0
+            years == 0 && months == 0 && days == 0 && hours == 0 && minutes == 0 && seconds == 0 && nanoseconds == 0
         }
     }
 }
@@ -125,8 +124,8 @@ extension ISO_8601.Duration {
             }
 
             // Time components
-            let hasTimeComponents = value.hours != 0 || value.minutes != 0 ||
-                                   value.seconds != 0 || value.nanoseconds != 0
+            let hasTimeComponents =
+                value.hours != 0 || value.minutes != 0 || value.seconds != 0 || value.nanoseconds != 0
 
             if hasTimeComponents {
                 result += "T"
@@ -276,7 +275,9 @@ extension ISO_8601.Duration {
             return (years, months, days)
         }
 
-        private static func parseTimeComponents(_ timePart: String) throws -> (hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) {
+        private static func parseTimeComponents(
+            _ timePart: String
+        ) throws -> (hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) {
             var hours = 0
             var minutes = 0
             var seconds = 0

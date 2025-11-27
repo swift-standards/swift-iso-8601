@@ -5,9 +5,10 @@
 //  Tests for ISO_8601.DateTime.Parser
 //
 
-import Testing
 import Foundation
 import StandardTime
+import Testing
+
 @testable import ISO_8601
 
 @Suite

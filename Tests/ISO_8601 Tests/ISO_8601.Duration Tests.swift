@@ -5,8 +5,9 @@
 //  Tests for ISO_8601.Duration
 //
 
-import Testing
 import Foundation
+import Testing
+
 @testable import ISO_8601
 
 @Suite
@@ -266,7 +267,7 @@ struct `ISO_8601.Duration Tests` {
 
     @Test
     func `Duration decodes from JSON string`() throws {
-        let json = "\"P1Y2M3D\"".data(using: .utf8)!
+        let json = Data("\"P1Y2M3D\"".utf8)
         let decoder = JSONDecoder()
         let duration = try decoder.decode(ISO_8601.Duration.self, from: json)
 

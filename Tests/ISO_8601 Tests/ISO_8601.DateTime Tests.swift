@@ -5,9 +5,10 @@
 //  Tests for ISO_8601.DateTime including creation, formatting, and parsing
 //
 
-import Testing
 import Foundation
 import StandardTime
+import Testing
+
 @testable import ISO_8601
 
 @Suite
@@ -17,18 +18,18 @@ struct `ISO_8601.DateTime Tests` {
 
     @Test
     func `Create from seconds since epoch`() throws {
-        let dateTime = try ISO_8601.DateTime(secondsSinceEpoch: 1609459200)
-        #expect(dateTime.secondsSinceEpoch == 1609459200)
+        let dateTime = try ISO_8601.DateTime(secondsSinceEpoch: 1_609_459_200)
+        #expect(dateTime.secondsSinceEpoch == 1_609_459_200)
         #expect(dateTime.timezoneOffsetSeconds == 0)
     }
 
     @Test
     func `Create from epoch with timezone offset`() throws {
         let dateTime = try ISO_8601.DateTime(
-            secondsSinceEpoch: 1609459200,
+            secondsSinceEpoch: 1_609_459_200,
             timezoneOffsetSeconds: 3600  // +01:00
         )
-        #expect(dateTime.secondsSinceEpoch == 1609459200)
+        #expect(dateTime.secondsSinceEpoch == 1_609_459_200)
         #expect(dateTime.timezoneOffsetSeconds == 3600)
     }
 

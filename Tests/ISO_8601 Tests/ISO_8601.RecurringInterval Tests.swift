@@ -5,8 +5,9 @@
 //  Tests for ISO_8601.RecurringInterval
 //
 
-import Testing
 import Foundation
+import Testing
+
 @testable import ISO_8601
 
 @Suite
@@ -286,7 +287,7 @@ struct `ISO_8601.RecurringInterval Tests` {
 
     @Test
     func `Recurring interval decodes from JSON string`() throws {
-        let json = "\"R12/P1M\"".data(using: .utf8)!
+        let json = Data("\"R12/P1M\"".utf8)
         let decoder = JSONDecoder()
         let recurring = try decoder.decode(ISO_8601.RecurringInterval.self, from: json)
 

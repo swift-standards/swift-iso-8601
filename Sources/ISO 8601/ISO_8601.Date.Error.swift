@@ -26,15 +26,15 @@ extension ISO_8601.Date {
         case invalidOrdinalDay(String)
 
         // Component validation errors
-        case monthOutOfRange(Int)           // Must be 1-12
+        case monthOutOfRange(Int)  // Must be 1-12
         case dayOutOfRange(Int, month: Int, year: Int)  // Must be valid for month/year
-        case hourOutOfRange(Int)            // Must be 0-23
-        case minuteOutOfRange(Int)          // Must be 0-59
-        case secondOutOfRange(Int)          // Must be 0-60 (allowing leap second)
+        case hourOutOfRange(Int)  // Must be 0-23
+        case minuteOutOfRange(Int)  // Must be 0-59
+        case secondOutOfRange(Int)  // Must be 0-60 (allowing leap second)
 
         // ISO 8601 specific validation errors
         case weekNumberOutOfRange(Int, year: Int)  // Must be 1-53 and valid for year
-        case weekdayOutOfRange(Int)         // Must be 1-7 (Monday=1, Sunday=7)
+        case weekdayOutOfRange(Int)  // Must be 1-7 (Monday=1, Sunday=7)
         case ordinalDayOutOfRange(Int, year: Int)  // Must be 1-365 (366 in leap years)
     }
 }

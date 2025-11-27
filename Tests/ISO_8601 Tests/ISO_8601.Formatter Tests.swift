@@ -5,8 +5,9 @@
 //  Tests for ISO_8601.DateTime.Formatter
 //
 
-import Testing
 import Foundation
+import Testing
+
 @testable import ISO_8601
 
 @Suite
@@ -158,7 +159,7 @@ struct `ISO_8601.Formatter Tests` {
     @Test
     func `Format with offset timezone extended`() throws {
         let dt = try ISO_8601.DateTime(
-            secondsSinceEpoch: 1705324200,
+            secondsSinceEpoch: 1_705_324_200,
             timezoneOffsetSeconds: 19800  // +05:30
         )
         let formatted = ISO_8601.DateTime.Formatter.format(
@@ -174,7 +175,7 @@ struct `ISO_8601.Formatter Tests` {
     @Test
     func `Format with offset timezone basic`() throws {
         let dt = try ISO_8601.DateTime(
-            secondsSinceEpoch: 1705324200,
+            secondsSinceEpoch: 1_705_324_200,
             timezoneOffsetSeconds: 19800  // +05:30
         )
         let formatted = ISO_8601.DateTime.Formatter.format(
@@ -190,7 +191,7 @@ struct `ISO_8601.Formatter Tests` {
     @Test
     func `Format with negative offset`() throws {
         let dt = try ISO_8601.DateTime(
-            secondsSinceEpoch: 1705324200,
+            secondsSinceEpoch: 1_705_324_200,
             timezoneOffsetSeconds: -18000  // -05:00
         )
         let formatted = ISO_8601.DateTime.Formatter.format(

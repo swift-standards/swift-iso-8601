@@ -5,10 +5,11 @@
 //  Validates our ISO 8601 implementation against Foundation's reference implementation
 //
 
-import Testing
 import Foundation
-@testable import ISO_8601
 import StandardTime
+import Testing
+
+@testable import ISO_8601
 
 @Suite
 struct `Foundation Comparison Tests` {
@@ -18,9 +19,15 @@ struct `Foundation Comparison Tests` {
     @Test(
         "Year boundary",
         arguments: [
-            (year: 2023, month: 1, day: 1, weekYear: 2022, week: 52, weekday: 7, desc: "2023-01-01 (Sunday) → 2022-W52"),
+            (
+                year: 2023, month: 1, day: 1, weekYear: 2022, week: 52, weekday: 7,
+                desc: "2023-01-01 (Sunday) → 2022-W52"
+            ),
             (year: 2024, month: 1, day: 1, weekYear: 2024, week: 1, weekday: 1, desc: "2024-01-01 (Monday) → 2024-W01"),
-            (year: 2025, month: 12, day: 29, weekYear: 2026, week: 1, weekday: 1, desc: "2025-12-29 (Monday) → 2026-W01"),
+            (
+                year: 2025, month: 12, day: 29, weekYear: 2026, week: 1, weekday: 1,
+                desc: "2025-12-29 (Monday) → 2026-W01"
+            ),
         ]
     )
     func yearBoundary(
@@ -210,7 +217,7 @@ struct `Foundation Comparison Tests` {
         let dt = try ISO_8601.DateTime(year: 1776, month: 7, day: 4)
 
         // Verify weekday (should be Thursday = 4 in ISO 8601)
-        let dayNum = dt.components.weekday // This is Gregorian 0=Sunday
+        let dayNum = dt.components.weekday  // This is Gregorian 0=Sunday
         // Convert: Gregorian Thursday = 4, ISO Thursday = 4
         #expect(dayNum == 4, "July 4, 1776 should be Thursday (weekday 4)")
 

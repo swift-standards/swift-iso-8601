@@ -5,8 +5,9 @@
 //  Tests for ISO_8601.WeekDate
 //
 
-import Testing
 import Foundation
+import Testing
+
 @testable import ISO_8601
 
 @Suite

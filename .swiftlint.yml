@@ -3,5 +3,12 @@
 
 parent_config: https://raw.githubusercontent.com/swift-standards/swift-standards/main/.swiftlint.yml
 
-# Package-specific overrides (if needed)
-# Add any swift-iso-8601 specific rules here
+# Package-specific overrides
+disabled_rules:
+  # force_try is used for compile-time constant date constructions
+  # (e.g., January 4th, which always exists) in calendar calculations
+  - force_try
+  # Cyclomatic complexity is high in ISO 8601 parsing due to format variants
+  - cyclomatic_complexity
+  # Function parameter count exceeds limit in Foundation comparison tests
+  - function_parameter_count

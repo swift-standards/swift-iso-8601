@@ -5,8 +5,9 @@
 //  Tests for ISO_8601.Time.Weekday
 //
 
-import Testing
 import Foundation
+import Testing
+
 @testable import ISO_8601
 
 @Suite
@@ -77,7 +78,7 @@ struct `ISO_8601.Time.Weekday Tests` {
             (.thursday, 4),
             (.friday, 5),
             (.saturday, 6),
-            (.sunday, 7)
+            (.sunday, 7),
         ]
 
         for (day, expectedISO) in days {
@@ -94,7 +95,7 @@ struct `ISO_8601.Time.Weekday Tests` {
             (.wednesday, 3),
             (.thursday, 4),
             (.friday, 5),
-            (.saturday, 6)
+            (.saturday, 6),
         ]
 
         for (day, expectedGregorian) in days {
@@ -202,7 +203,7 @@ struct `ISO_8601.Time.Weekday Tests` {
 
     @Test
     func `Weekday decodes from JSON`() throws {
-        let json = "2".data(using: .utf8)!
+        let json = Data("2".utf8)
         let decoder = JSONDecoder()
         let weekday = try decoder.decode(ISO_8601.Time.Weekday.self, from: json)
 
@@ -215,10 +216,10 @@ struct `ISO_8601.Time.Weekday Tests` {
     func `Weekday calculation matches Components weekday`() throws {
         // Test a few dates to ensure consistency with existing weekday calculation
         let testDates = [
-            (year: 2024, month: 1, day: 15),   // Monday
-            (year: 2024, month: 2, day: 14),   // Wednesday
+            (year: 2024, month: 1, day: 15),  // Monday
+            (year: 2024, month: 2, day: 14),  // Wednesday
             (year: 2024, month: 12, day: 25),  // Wednesday
-            (year: 2000, month: 1, day: 1)     // Saturday
+            (year: 2000, month: 1, day: 1),  // Saturday
         ]
 
         for testDate in testDates {
