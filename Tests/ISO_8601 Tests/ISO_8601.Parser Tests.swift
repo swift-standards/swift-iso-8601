@@ -142,7 +142,14 @@ struct `ISO_8601.Parser Tests` {
 
     @Test
     func `Round-trip calendar date extended`() throws {
-        let original = try ISO_8601.DateTime(year: 2024, month: 1, day: 15, hour: 12, minute: 30, second: 45)
+        let original = try ISO_8601.DateTime(
+            year: 2024,
+            month: 1,
+            day: 15,
+            hour: 12,
+            minute: 30,
+            second: 45
+        )
         let formatted = ISO_8601.DateTime.Formatter.format(original)
         let parsed = try ISO_8601.DateTime.Parser.parse(formatted)
 
@@ -151,7 +158,14 @@ struct `ISO_8601.Parser Tests` {
 
     @Test
     func `Round-trip calendar date basic`() throws {
-        let original = try ISO_8601.DateTime(year: 2024, month: 1, day: 15, hour: 12, minute: 30, second: 45)
+        let original = try ISO_8601.DateTime(
+            year: 2024,
+            month: 1,
+            day: 15,
+            hour: 12,
+            minute: 30,
+            second: 45
+        )
         let formatted = ISO_8601.DateTime.Formatter.format(
             original,
             date: .calendar(extended: false),

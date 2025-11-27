@@ -223,8 +223,16 @@ struct `ISO_8601.Time.Weekday Tests` {
         ]
 
         for testDate in testDates {
-            let weekday = ISO_8601.Time.Weekday(year: testDate.year, month: testDate.month, day: testDate.day)
-            let dateTime = try ISO_8601.DateTime(year: testDate.year, month: testDate.month, day: testDate.day)
+            let weekday = ISO_8601.Time.Weekday(
+                year: testDate.year,
+                month: testDate.month,
+                day: testDate.day
+            )
+            let dateTime = try ISO_8601.DateTime(
+                year: testDate.year,
+                month: testDate.month,
+                day: testDate.day
+            )
             let components = dateTime.components
 
             // Components.weekday is Zeller's format (0=Sunday)

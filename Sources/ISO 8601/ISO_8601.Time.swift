@@ -75,7 +75,9 @@ extension ISO_8601 {
                     second == nil || second == 0,
                     nanoseconds == 0
                 else {
-                    throw ISO_8601.Date.Error.invalidTime("24:xx:xx is not valid, only 24:00:00 is allowed")
+                    throw ISO_8601.Date.Error.invalidTime(
+                        "24:xx:xx is not valid, only 24:00:00 is allowed"
+                    )
                 }
             }
 
@@ -188,7 +190,8 @@ extension ISO_8601.Time {
         private static func formatTimezoneOffset(_ offsetSeconds: Int, extended: Bool) -> String {
             let sign = offsetSeconds >= 0 ? "+" : "-"
             let absOffset = abs(offsetSeconds)
-            let hours = absOffset / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerHour
+            let hours =
+                absOffset / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerHour
             let minutes =
                 (absOffset % StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerHour)
                 / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
@@ -325,7 +328,9 @@ extension ISO_8601.Time {
             )
         }
 
-        private static func parseFractionalSeconds(_ value: String) throws -> (seconds: Int, nanoseconds: Int) {
+        private static func parseFractionalSeconds(
+            _ value: String
+        ) throws -> (seconds: Int, nanoseconds: Int) {
             // Check for decimal point or comma
             let separator: Character
             if value.contains(".") {
@@ -367,11 +372,15 @@ extension ISO_8601.Time {
             return nano
         }
 
-        private static func extractFractionalPart(_ value: String) -> (intPart: String, fracPart: String) {
+        private static func extractFractionalPart(
+            _ value: String
+        ) -> (intPart: String, fracPart: String) {
             if let dotIndex = value.firstIndex(of: ".") {
                 return (String(value[..<dotIndex]), String(value[value.index(after: dotIndex)...]))
             } else if let commaIndex = value.firstIndex(of: ",") {
-                return (String(value[..<commaIndex]), String(value[value.index(after: commaIndex)...]))
+                return (
+                    String(value[..<commaIndex]), String(value[value.index(after: commaIndex)...])
+                )
             } else {
                 return (value, "")
             }
@@ -529,11 +538,11 @@ extension ISO_8601.Time {
             }
 
             let q = day
-            let K = y % 100
-            let J = y / 100
+            let k = y % 100  // Year of century
+            let j = y / 100  // Zero-based century
 
             // Zeller's formula
-            let h = (q + ((13 * (m + 1)) / 5) + K + (K / 4) + (J / 4) - (2 * J)) % 7
+            let h = (q + ((13 * (m + 1)) / 5) + k + (k / 4) + (j / 4) - (2 * j)) % 7
 
             // Convert from Zeller's (0=Saturday) to Gregorian (0=Sunday)
             let gregorianDay = (h + 6) % 7

@@ -23,7 +23,10 @@ struct `Foundation Comparison Tests` {
                 year: 2023, month: 1, day: 1, weekYear: 2022, week: 52, weekday: 7,
                 desc: "2023-01-01 (Sunday) → 2022-W52"
             ),
-            (year: 2024, month: 1, day: 1, weekYear: 2024, week: 1, weekday: 1, desc: "2024-01-01 (Monday) → 2024-W01"),
+            (
+                year: 2024, month: 1, day: 1, weekYear: 2024, week: 1, weekday: 1,
+                desc: "2024-01-01 (Monday) → 2024-W01"
+            ),
             (
                 year: 2025, month: 12, day: 29, weekYear: 2026, week: 1, weekday: 1,
                 desc: "2025-12-29 (Monday) → 2026-W01"
@@ -31,8 +34,12 @@ struct `Foundation Comparison Tests` {
         ]
     )
     func yearBoundary(
-        year: Int, month: Int, day: Int,
-        weekYear: Int, week: Int, weekday: Int,
+        year: Int,
+        month: Int,
+        day: Int,
+        weekYear: Int,
+        week: Int,
+        weekday: Int,
         desc: String
     ) throws {
         let dt = try ISO_8601.DateTime(year: year, month: month, day: day)
@@ -71,7 +78,10 @@ struct `Foundation Comparison Tests` {
         let weekOfYear = calendar.component(.weekOfYear, from: date)
         let yearForWeekOfYear = calendar.component(.yearForWeekOfYear, from: date)
 
-        #expect(yearForWeekOfYear == year, "Foundation confirms: Jan 4, \(year) week-year is \(year)")
+        #expect(
+            yearForWeekOfYear == year,
+            "Foundation confirms: Jan 4, \(year) week-year is \(year)"
+        )
         #expect(weekOfYear == 1, "Foundation confirms: Jan 4, \(year) is week 1")
     }
 

@@ -87,9 +87,17 @@ extension ISO_8601.DateTime {
     /// The time components will be 00:00:00 UTC.
     public init(_ weekDate: ISO_8601.WeekDate) {
         // Find January 4th of the week-year (which is always in week 1)
-        let jan4Time = try! StandardTime.Time(year: weekDate.weekYear, month: 1, day: 4, hour: 0, minute: 0, second: 0)
+        let jan4Time = try! StandardTime.Time(
+            year: weekDate.weekYear,
+            month: 1,
+            day: 4,
+            hour: 0,
+            minute: 0,
+            second: 0
+        )
         let jan4DaysSinceEpoch =
-            jan4Time.secondsSinceEpoch / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
+            jan4Time.secondsSinceEpoch
+            / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
 
         // Find the weekday of January 4th
         let jan4WeekdayEnum = jan4Time.weekday
@@ -113,8 +121,13 @@ extension ISO_8601.DateTime {
         // Our date is (week - 1) weeks later, plus (weekday - 1) days
         let daysSinceEpoch = mondayOfWeek1 + ((weekDate.week - 1) * 7) + (weekDate.weekday - 1)
 
-        let totalSeconds = daysSinceEpoch * StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
+        let totalSeconds =
+            daysSinceEpoch * StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
 
-        self.init(uncheckedSecondsEpoch: totalSeconds, timezoneOffsetSeconds: 0)
+        self.init(
+            __unchecked: (),
+            secondsEpoch: totalSeconds,
+            timezoneOffsetSeconds: 0
+        )
     }
 }

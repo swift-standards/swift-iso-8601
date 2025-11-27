@@ -5,10 +5,7 @@ parent_config: https://raw.githubusercontent.com/swift-standards/swift-standards
 
 # Package-specific overrides
 disabled_rules:
-  # force_try is used for compile-time constant date constructions
-  # (e.g., January 4th, which always exists) in calendar calculations
-  - force_try
-  # Cyclomatic complexity is high in ISO 8601 parsing due to format variants
-  - cyclomatic_complexity
-  # Function parameter count exceeds limit in Foundation comparison tests
-  - function_parameter_count
+  - function_parameter_count  # DateTime initializers need many parameters
+  - force_try  # Internal initializers with validated inputs use force try
+  - cyclomatic_complexity  # Complex parsing logic for ISO 8601 formats
+  - opening_brace  # Conflicts with swift-format line length rules

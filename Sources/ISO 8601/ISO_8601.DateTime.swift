@@ -44,7 +44,10 @@ extension ISO_8601 {
         /// - Parameters:
         ///   - time: The UTC time
         ///   - timezoneOffset: Timezone offset (default: UTC)
-        public init(time: StandardTime.Time, timezoneOffset: StandardTime.Time.TimezoneOffset = .utc) {
+        public init(
+            time: StandardTime.Time,
+            timezoneOffset: StandardTime.Time.TimezoneOffset = .utc
+        ) {
             self.time = time
             self.timezoneOffset = timezoneOffset
         }
@@ -55,7 +58,11 @@ extension ISO_8601 {
         ///   - nanoseconds: Nanoseconds component (0-999,999,999, default: 0)
         ///   - timezoneOffsetSeconds: Timezone offset in seconds (default: 0 for UTC)
         /// - Throws: `ISO_8601.Date.Error` if nanoseconds is out of range
-        public init(secondsSinceEpoch: Int = 0, nanoseconds: Int = 0, timezoneOffsetSeconds: Int = 0) throws {
+        public init(
+            secondsSinceEpoch: Int = 0,
+            nanoseconds: Int = 0,
+            timezoneOffsetSeconds: Int = 0
+        ) throws {
             guard (0..<1_000_000_000).contains(nanoseconds) else {
                 throw ISO_8601.Date.Error.invalidFractionalSecond(String(nanoseconds))
             }
@@ -73,23 +80,31 @@ extension ISO_8601 {
                 hour: baseTime.hour,
                 minute: baseTime.minute,
                 second: baseTime.second,
-                millisecond: try! StandardTime.Time.Millisecond(millisecond),
-                microsecond: try! StandardTime.Time.Microsecond(microsecond),
-                nanosecond: try! StandardTime.Time.Nanosecond(nanosecond)
+                millisecond: try StandardTime.Time.Millisecond(millisecond),
+                microsecond: try StandardTime.Time.Microsecond(microsecond),
+                nanosecond: try StandardTime.Time.Nanosecond(nanosecond)
             )
-            self.init(time: time, timezoneOffset: StandardTime.Time.TimezoneOffset(seconds: timezoneOffsetSeconds))
+            self.init(
+                time: time,
+                timezoneOffset: StandardTime.Time.TimezoneOffset(seconds: timezoneOffsetSeconds)
+            )
         }
 
         /// Create a date-time without validation (internal use only)
         /// - Warning: Using this with invalid nanoseconds will create an invalid DateTime
-        internal init(uncheckedSecondsEpoch: Int, nanoseconds: Int = 0, timezoneOffsetSeconds: Int = 0) {
+        internal init(
+            __unchecked: Void = (),
+            secondsEpoch: Int,
+            nanoseconds: Int = 0,
+            timezoneOffsetSeconds: Int = 0
+        ) {
             // Convert total nanoseconds to millisecond/microsecond/nanosecond components
             let millisecond = nanoseconds / 1_000_000
             let remaining = nanoseconds % 1_000_000
             let microsecond = remaining / 1000
             let nanosecond = remaining % 1000
 
-            let baseTime = StandardTime.Time(secondsSinceEpoch: uncheckedSecondsEpoch)
+            let baseTime = StandardTime.Time(secondsSinceEpoch: secondsEpoch)
             let time = StandardTime.Time(
                 year: baseTime.year,
                 month: baseTime.month,
@@ -101,7 +116,10 @@ extension ISO_8601 {
                 microsecond: try! StandardTime.Time.Microsecond(microsecond),
                 nanosecond: try! StandardTime.Time.Nanosecond(nanosecond)
             )
-            self.init(time: time, timezoneOffset: StandardTime.Time.TimezoneOffset(seconds: timezoneOffsetSeconds))
+            self.init(
+                time: time,
+                timezoneOffset: StandardTime.Time.TimezoneOffset(seconds: timezoneOffsetSeconds)
+            )
         }
 
         /// Seconds since Unix epoch (computed property for compatibility)
@@ -194,7 +212,10 @@ extension ISO_8601.DateTime {
             nanosecond: nanosecond
         )
 
-        self.init(time: time, timezoneOffset: StandardTime.Time.TimezoneOffset(seconds: timezoneOffsetSeconds))
+        self.init(
+            time: time,
+            timezoneOffset: StandardTime.Time.TimezoneOffset(seconds: timezoneOffsetSeconds)
+        )
     }
 }
 
@@ -269,14 +290,30 @@ extension ISO_8601.DateTime {
         let isoDay = isoWeekday
         let daysSinceMonday = isoDay - 1
         let currentTime = try! StandardTime.Time(
-            year: comp.year, month: comp.month, day: comp.day, hour: 0, minute: 0, second: 0)
+            year: comp.year,
+            month: comp.month,
+            day: comp.day,
+            hour: 0,
+            minute: 0,
+            second: 0
+        )
         let mondayOfWeek =
-            currentTime.secondsSinceEpoch / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
+            currentTime.secondsSinceEpoch
+            / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
             - daysSinceMonday
 
         // Find January 4th of this year (which is always in week 1)
-        let jan4Time = try! StandardTime.Time(year: comp.year, month: 1, day: 4, hour: 0, minute: 0, second: 0)
-        let jan4 = jan4Time.secondsSinceEpoch / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
+        let jan4Time = try! StandardTime.Time(
+            year: comp.year,
+            month: 1,
+            day: 4,
+            hour: 0,
+            minute: 0,
+            second: 0
+        )
+        let jan4 =
+            jan4Time.secondsSinceEpoch
+            / StandardTime.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
 
         // Find the Monday of the week containing January 4th
         let jan4WeekdayEnum = jan4Time.weekday
@@ -316,7 +353,14 @@ extension ISO_8601.DateTime {
         // - January 1 is a Thursday, OR
         // - January 1 is a Wednesday and it's a leap year
 
-        let jan1Time = try! StandardTime.Time(year: year, month: 1, day: 1, hour: 0, minute: 0, second: 0)
+        let jan1Time = try! StandardTime.Time(
+            year: year,
+            month: 1,
+            day: 1,
+            hour: 0,
+            minute: 0,
+            second: 0
+        )
         let jan1WeekdayEnum = jan1Time.weekday
         let jan1Weekday: Int
         switch jan1WeekdayEnum {
@@ -334,7 +378,8 @@ extension ISO_8601.DateTime {
             return 53
         }
 
-        if jan1ISOWeekday == 3 && StandardTime.Time.Calendar.Gregorian.isLeapYear(year) {  // Wednesday and leap year
+        // Wednesday and leap year
+        if jan1ISOWeekday == 3 && StandardTime.Time.Calendar.Gregorian.isLeapYear(year) {
             return 53
         }
 
@@ -427,7 +472,8 @@ extension ISO_8601.DateTime {
 
         // MARK: - Private Formatting Helpers
 
-        private static func formatCalendarDate(_ value: ISO_8601.DateTime, extended: Bool) -> String {
+        private static func formatCalendarDate(_ value: ISO_8601.DateTime, extended: Bool) -> String
+        {
             let comp = value.components
             let year = formatFourDigits(comp.year)
             let month = formatTwoDigits(comp.month)
@@ -452,7 +498,8 @@ extension ISO_8601.DateTime {
             }
         }
 
-        private static func formatOrdinalDate(_ value: ISO_8601.DateTime, extended: Bool) -> String {
+        private static func formatOrdinalDate(_ value: ISO_8601.DateTime, extended: Bool) -> String
+        {
             let comp = value.components
             let year = formatFourDigits(comp.year)
             let day = formatThreeDigits(value.ordinalDay)
@@ -594,7 +641,9 @@ extension ISO_8601.DateTime {
             // ISO 8601: 24:00:00 = 00:00:00 of next day
             if hour == 24 {
                 guard minute == 0 && second == 0 && nanoseconds == 0 else {
-                    throw ISO_8601.Date.Error.invalidTime("24:xx:xx is not valid, only 24:00:00 is allowed")
+                    throw ISO_8601.Date.Error.invalidTime(
+                        "24:xx:xx is not valid, only 24:00:00 is allowed"
+                    )
                 }
 
                 // Advance to next day at 00:00:00
@@ -637,7 +686,9 @@ extension ISO_8601.DateTime {
             // Detect format by looking for specific patterns
             if value.contains("W") {
                 return try parseWeekDate(value)
-            } else if value.count >= 7 && (value.count == 7 || value.count == 8) && !value.contains("-") {
+            } else if value.count >= 7 && (value.count == 7 || value.count == 8)
+                && !value.contains("-")
+            {
                 // Could be basic ordinal (YYYYDDD) or basic calendar (YYYYMMDD)
                 if value.count == 7 {
                     return try parseOrdinalDate(value)
@@ -660,7 +711,9 @@ extension ISO_8601.DateTime {
             }
         }
 
-        private static func parseCalendarDate(_ value: String) throws -> (year: Int, month: Int, day: Int) {
+        private static func parseCalendarDate(
+            _ value: String
+        ) throws -> (year: Int, month: Int, day: Int) {
             if value.contains("-") {
                 // Extended format: YYYY-MM-DD
                 let parts = value.split(separator: "-").map(String.init)
@@ -703,7 +756,9 @@ extension ISO_8601.DateTime {
             }
         }
 
-        private static func parseWeekDate(_ value: String) throws -> (year: Int, month: Int, day: Int) {
+        private static func parseWeekDate(
+            _ value: String
+        ) throws -> (year: Int, month: Int, day: Int) {
             if value.contains("-") {
                 // Extended format: YYYY-Www-D
                 let parts = value.split(separator: "-").map(String.init)
@@ -728,7 +783,11 @@ extension ISO_8601.DateTime {
                     throw ISO_8601.Date.Error.invalidWeekday(parts[2])
                 }
 
-                let weekDate = try ISO_8601.WeekDate(weekYear: weekYear, week: week, weekday: weekday)
+                let weekDate = try ISO_8601.WeekDate(
+                    weekYear: weekYear,
+                    week: week,
+                    weekday: weekday
+                )
                 let dateTime = ISO_8601.DateTime(weekDate)
                 let comp = dateTime.components
                 return (comp.year, comp.month, comp.day)
@@ -759,14 +818,20 @@ extension ISO_8601.DateTime {
                     throw ISO_8601.Date.Error.invalidWeekday(weekdayStr)
                 }
 
-                let weekDate = try ISO_8601.WeekDate(weekYear: weekYear, week: week, weekday: weekday)
+                let weekDate = try ISO_8601.WeekDate(
+                    weekYear: weekYear,
+                    week: week,
+                    weekday: weekday
+                )
                 let dateTime = ISO_8601.DateTime(weekDate)
                 let comp = dateTime.components
                 return (comp.year, comp.month, comp.day)
             }
         }
 
-        private static func parseOrdinalDate(_ value: String) throws -> (year: Int, month: Int, day: Int) {
+        private static func parseOrdinalDate(
+            _ value: String
+        ) throws -> (year: Int, month: Int, day: Int) {
             if value.contains("-") {
                 // Extended format: YYYY-DDD
                 let parts = value.split(separator: "-").map(String.init)
@@ -894,7 +959,9 @@ extension ISO_8601.DateTime {
             return (hour, minute, second, nanoseconds, timezoneOffset)
         }
 
-        private static func parseFractionalSeconds(_ value: String) throws -> (seconds: Int, nanoseconds: Int) {
+        private static func parseFractionalSeconds(
+            _ value: String
+        ) throws -> (seconds: Int, nanoseconds: Int) {
             // Check for decimal point or comma
             let separator: Character
             if value.contains(".") {

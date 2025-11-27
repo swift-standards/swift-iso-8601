@@ -145,7 +145,9 @@ struct `ISO_8601.RecurringInterval Tests` {
 
     @Test
     func `Parse recurring with end date`() throws {
-        let recurring = try ISO_8601.RecurringInterval.Parser.parse("R3/P1Y2M10DT2H30M/2019-12-31T23:59:59Z")
+        let recurring = try ISO_8601.RecurringInterval.Parser.parse(
+            "R3/P1Y2M10DT2H30M/2019-12-31T23:59:59Z"
+        )
 
         #expect(recurring.repetitions == 3)
 
@@ -168,7 +170,9 @@ struct `ISO_8601.RecurringInterval Tests` {
 
     @Test
     func `Parse recurring with start and end`() throws {
-        let recurring = try ISO_8601.RecurringInterval.Parser.parse("R7/2019-01-01T00:00:00Z/2019-01-08T00:00:00Z")
+        let recurring = try ISO_8601.RecurringInterval.Parser.parse(
+            "R7/2019-01-01T00:00:00Z/2019-01-08T00:00:00Z"
+        )
 
         #expect(recurring.repetitions == 7)
 

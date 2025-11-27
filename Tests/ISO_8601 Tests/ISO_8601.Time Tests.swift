@@ -170,7 +170,8 @@ struct `ISO_8601.Time Tests` {
 
     @Test
     func `Format time with positive offset extended`() throws {
-        let time = try ISO_8601.Time(hour: 12, minute: 30, second: 45, timezoneOffsetSeconds: 19800)  // +05:30
+        // +05:30
+        let time = try ISO_8601.Time(hour: 12, minute: 30, second: 45, timezoneOffsetSeconds: 19800)
 
         #expect(time.description == "12:30:45+05:30")
     }
@@ -185,7 +186,12 @@ struct `ISO_8601.Time Tests` {
 
     @Test
     func `Format time with negative offset`() throws {
-        let time = try ISO_8601.Time(hour: 12, minute: 30, second: 45, timezoneOffsetSeconds: -18000)  // -05:00
+        let time = try ISO_8601.Time(
+            hour: 12,
+            minute: 30,
+            second: 45,
+            timezoneOffsetSeconds: -18000
+        )  // -05:00
 
         #expect(time.description == "12:30:45-05:00")
     }
@@ -327,7 +333,12 @@ struct `ISO_8601.Time Tests` {
 
     @Test
     func `Round-trip time with timezone`() throws {
-        let original = try ISO_8601.Time(hour: 12, minute: 30, second: 45, timezoneOffsetSeconds: 19800)
+        let original = try ISO_8601.Time(
+            hour: 12,
+            minute: 30,
+            second: 45,
+            timezoneOffsetSeconds: 19800
+        )
         let formatted = original.description
         let parsed = try ISO_8601.Time.Parser.parse(formatted)
 

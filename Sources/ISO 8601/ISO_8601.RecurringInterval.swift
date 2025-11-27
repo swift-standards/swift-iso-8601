@@ -110,7 +110,9 @@ extension ISO_8601.RecurringInterval {
 
             // Split on first slash to separate repetitions from interval
             guard let firstSlash = afterR.firstIndex(of: "/") else {
-                throw ISO_8601.Date.Error.invalidFormat("Recurring interval must contain '/' separator")
+                throw ISO_8601.Date.Error.invalidFormat(
+                    "Recurring interval must contain '/' separator"
+                )
             }
 
             let repsStr = String(afterR[..<firstSlash])

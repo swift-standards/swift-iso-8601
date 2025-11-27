@@ -84,7 +84,8 @@ extension ISO_8601 {
 
         /// Check if this duration represents zero time
         public var isZero: Bool {
-            years == 0 && months == 0 && days == 0 && hours == 0 && minutes == 0 && seconds == 0 && nanoseconds == 0
+            years == 0 && months == 0 && days == 0 && hours == 0 && minutes == 0 && seconds == 0
+                && nanoseconds == 0
         }
     }
 }
@@ -125,7 +126,8 @@ extension ISO_8601.Duration {
 
             // Time components
             let hasTimeComponents =
-                value.hours != 0 || value.minutes != 0 || value.seconds != 0 || value.nanoseconds != 0
+                value.hours != 0 || value.minutes != 0 || value.seconds != 0
+                || value.nanoseconds != 0
 
             if hasTimeComponents {
                 result += "T"
@@ -195,7 +197,9 @@ extension ISO_8601.Duration {
             // Validate that remaining contains at least one valid component marker
             let validMarkers: Set<Character> = ["Y", "M", "D", "T", "H", "S"]
             guard remaining.contains(where: { validMarkers.contains($0) }) else {
-                throw ISO_8601.Date.Error.invalidFormat("Duration must have at least one valid component")
+                throw ISO_8601.Date.Error.invalidFormat(
+                    "Duration must have at least one valid component"
+                )
             }
 
             var years = 0
@@ -237,7 +241,9 @@ extension ISO_8601.Duration {
             )
         }
 
-        private static func parseDateComponents(_ datePart: String) throws -> (years: Int, months: Int, days: Int) {
+        private static func parseDateComponents(
+            _ datePart: String
+        ) throws -> (years: Int, months: Int, days: Int) {
             var years = 0
             var months = 0
             var days = 0

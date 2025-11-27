@@ -42,7 +42,9 @@ struct `ISO_8601.Interval Tests` {
 
     @Test
     func `Parse start-end interval`() throws {
-        let interval = try ISO_8601.Interval.Parser.parse("2019-08-27T00:00:00Z/2019-08-29T00:00:00Z")
+        let interval = try ISO_8601.Interval.Parser.parse(
+            "2019-08-27T00:00:00Z/2019-08-29T00:00:00Z"
+        )
 
         guard case .startEnd(let start, let end) = interval else {
             Issue.record("Expected startEnd interval")
@@ -184,7 +186,9 @@ struct `ISO_8601.Interval Tests` {
 
     @Test
     func `Parse interval with time components`() throws {
-        let interval = try ISO_8601.Interval.Parser.parse("2019-08-27T12:30:00Z/2019-08-29T18:45:00Z")
+        let interval = try ISO_8601.Interval.Parser.parse(
+            "2019-08-27T12:30:00Z/2019-08-29T18:45:00Z"
+        )
 
         guard case .startEnd(let start, let end) = interval else {
             Issue.record("Expected startEnd interval")
