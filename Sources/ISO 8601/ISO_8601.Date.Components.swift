@@ -171,9 +171,9 @@ extension ISO_8601.Date.Components {
         // Components calculated from valid epoch seconds are always valid
         // Use unchecked initializer to bypass validation in hot path
         self = ISO_8601.Date.Components(
-            uncheckedYear: localTime.year.value,
-            month: localTime.month.value,
-            day: localTime.day.value,
+            uncheckedYear: localTime.year.rawValue,
+            month: localTime.month.rawValue,
+            day: localTime.day.rawValue,
             hour: localTime.hour.value,
             minute: localTime.minute.value,
             second: localTime.second.value,
