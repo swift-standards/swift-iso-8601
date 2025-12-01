@@ -31,8 +31,8 @@ let package = Package(
         .library(name: .iso8601, targets: [.iso8601]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-standards/swift-standards", from: "0.4.0"),
-        .package(url: "https://github.com/swift-standards/swift-incits-4-1986", from: "0.4.1")
+        .package(url: "https://github.com/swift-standards/swift-standards", from: "0.8.0"),
+        .package(url: "https://github.com/swift-standards/swift-incits-4-1986", from: "0.6.0")
     ],
     targets: [
         .target(
