@@ -1,4 +1,4 @@
-// swift-tools-version:6.2
+// swift-tools-version: 6.2
 
 import PackageDescription
 
@@ -22,17 +22,18 @@ extension Target.Dependency {
 let package = Package(
     name: "swift-iso-8601",
     platforms: [
-        .macOS(.v15),
-        .iOS(.v18),
-        .tvOS(.v18),
-        .watchOS(.v11)
+        .macOS(.v26),
+        .iOS(.v26),
+        .tvOS(.v26),
+        .watchOS(.v26),
+        .visionOS(.v26),
     ],
     products: [
         .library(name: .iso8601, targets: [.iso8601]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-standards/swift-standards", from: "0.8.0"),
-        .package(url: "https://github.com/swift-standards/swift-incits-4-1986", from: "0.6.0")
+        .package(url: "https://github.com/swift-standards/swift-standards", from: "0.1.0"),
+        .package(url: "https://github.com/swift-standards/swift-incits-4-1986", from: "0.1.0"),
     ],
     targets: [
         .target(
