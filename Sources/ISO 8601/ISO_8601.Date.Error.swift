@@ -1,4 +1,4 @@
-public import Time_Primitives
+public import Time
 
 extension ISO_8601.Date {
 
@@ -29,6 +29,6 @@ extension ISO_8601.Date {
         case weekdayOutOfRange(Int)
         case ordinalDayOutOfRange(Int, year: Int)
 
-        case invalidComponents(Time_Primitives.Time.Error)
+        case invalidComponents(Time.Time.Error)
     }
 }

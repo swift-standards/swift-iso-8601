@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-import Time_Primitives
+import Time
 
 @testable import ISO_8601
 
@@ -124,7 +124,7 @@ extension `Foundation Comparison Tests`.Integration {
     )
     func `Weeks in year`(year: Int, expectedWeeks: Int, desc: String) throws {
 
-        let lastDay = Time_Primitives.Time.Calendar.Gregorian.isLeapYear(year) ? 31 : 30
+        let lastDay = Time.Time.Calendar.Gregorian.isLeapYear(year) ? 31 : 30
         let dt = try ISO_8601.DateTime(year: year, month: 12, day: lastDay)
 
         if expectedWeeks == 53 {

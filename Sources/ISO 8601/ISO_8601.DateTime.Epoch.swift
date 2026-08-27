@@ -1,4 +1,4 @@
-import Time_Primitives
+import Time
 
 extension ISO_8601.DateTime {
 

@@ -1,4 +1,4 @@
-import Time_Primitives
+import Time
 
 extension ISO_8601 {
 
@@ -9,7 +9,7 @@ extension ISO_8601 {
         public let day: Int
 
         public init(year: Int, day: Int) throws(ISO_8601.Date.Error) {
-            let maxDay = Time_Primitives.Time.Calendar.Gregorian.isLeapYear(year) ? 366 : 365
+            let maxDay = Time.Time.Calendar.Gregorian.isLeapYear(year) ? 366 : 365
             guard (1...maxDay).contains(day) else {
                 throw ISO_8601.Date.Error.ordinalDayOutOfRange(day, year: year)
             }
@@ -37,7 +37,7 @@ extension ISO_8601.DateTime {
 
     public init(_ ordinalDate: ISO_8601.OrdinalDate) {
 
-        let monthDays = Time_Primitives.Time.Calendar.Gregorian.daysInMonths(year: ordinalDate.year)
+        let monthDays = Time.Time.Calendar.Gregorian.daysInMonths(year: ordinalDate.year)
         var remainingDays = ordinalDate.day - 1
         var month = 1
 

@@ -1,5 +1,5 @@
-public import ASCII_Decimal_Parser_Primitives
-import Parser_Primitives
+public import ASCII_Decimal_Parser
+import Parser
 
 extension ISO_8601.Duration {
 

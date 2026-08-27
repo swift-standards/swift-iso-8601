@@ -1,4 +1,4 @@
-import Time_Primitives
+import Time
 
 extension ISO_8601.DateTime {
 
@@ -71,9 +71,9 @@ extension ISO_8601.DateTime.Formatter {
         switch timezone {
         case .utc:
 
-            let utcTime: Time_Primitives.Time
+            let utcTime: Time.Time
             do {
-                utcTime = try Time_Primitives.Time(
+                utcTime = try Time.Time(
                     secondsSinceEpoch: value.epoch.seconds,
                     nanoseconds: value.nanoseconds
                 )

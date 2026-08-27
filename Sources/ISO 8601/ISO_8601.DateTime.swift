@@ -1,7 +1,7 @@
-import Byte_Parser_Primitives
-import Parser_Primitives
+import Byte_Parser
+import Parser
 import Standard_Library_Extensions
-public import Time_Primitives
+public import Time
 
 extension ISO_8601 {
 
@@ -9,13 +9,13 @@ extension ISO_8601 {
 
     public struct DateTime: Sendable, Equatable, Hashable, Comparable {
 
-        public let time: Time_Primitives.Time
+        public let time: Time.Time
 
-        public let timezoneOffset: Time_Primitives.Time.Timezone.Offset
+        public let timezoneOffset: Time.Time.Timezone.Offset
 
         public init(
-            time: Time_Primitives.Time,
-            timezoneOffset: Time_Primitives.Time.Timezone.Offset = .utc
+            time: Time.Time,
+            timezoneOffset: Time.Time.Timezone.Offset = .utc
         ) {
             self.time = time
             self.timezoneOffset = timezoneOffset
@@ -39,21 +39,21 @@ extension ISO_8601.DateTime {
         let microsecond = remaining / 1000
         let nanosecond = remaining % 1000
 
-        let baseTime = Time_Primitives.Time(secondsSinceEpoch: secondsSinceEpoch)
+        let baseTime = Time.Time(secondsSinceEpoch: secondsSinceEpoch)
 
-        let millisecondValue: Time_Primitives.Time.Millisecond
-        let microsecondValue: Time_Primitives.Time.Microsecond
-        let nanosecondValue: Time_Primitives.Time.Nanosecond
+        let millisecondValue: Time.Time.Millisecond
+        let microsecondValue: Time.Time.Microsecond
+        let nanosecondValue: Time.Time.Nanosecond
         do {
-            millisecondValue = try Time_Primitives.Time.Millisecond(millisecond)
-            microsecondValue = try Time_Primitives.Time.Microsecond(microsecond)
-            nanosecondValue = try Time_Primitives.Time.Nanosecond(nanosecond)
+            millisecondValue = try Time.Time.Millisecond(millisecond)
+            microsecondValue = try Time.Time.Microsecond(microsecond)
+            nanosecondValue = try Time.Time.Nanosecond(nanosecond)
         } catch {
             fatalError(
                 "ISO_8601.DateTime: sub-second component derived from validated nanoseconds was out of range — \(error)"
             )
         }
-        let time = Time_Primitives.Time(
+        let time = Time.Time(
             year: baseTime.year,
             month: baseTime.month,
             day: baseTime.day,
@@ -66,7 +66,7 @@ extension ISO_8601.DateTime {
         )
         self.init(
             time: time,
-            timezoneOffset: Time_Primitives.Time.Timezone.Offset(seconds: timezoneOffsetSeconds)
+            timezoneOffset: Time.Time.Timezone.Offset(seconds: timezoneOffsetSeconds)
         )
     }
 
@@ -82,21 +82,21 @@ extension ISO_8601.DateTime {
         let microsecond = remaining / 1000
         let nanosecond = remaining % 1000
 
-        let baseTime = Time_Primitives.Time(secondsSinceEpoch: secondsEpoch)
+        let baseTime = Time.Time(secondsSinceEpoch: secondsEpoch)
 
-        let millisecondValue: Time_Primitives.Time.Millisecond
-        let microsecondValue: Time_Primitives.Time.Microsecond
-        let nanosecondValue: Time_Primitives.Time.Nanosecond
+        let millisecondValue: Time.Time.Millisecond
+        let microsecondValue: Time.Time.Microsecond
+        let nanosecondValue: Time.Time.Nanosecond
         do {
-            millisecondValue = try Time_Primitives.Time.Millisecond(millisecond)
-            microsecondValue = try Time_Primitives.Time.Microsecond(microsecond)
-            nanosecondValue = try Time_Primitives.Time.Nanosecond(nanosecond)
+            millisecondValue = try Time.Time.Millisecond(millisecond)
+            microsecondValue = try Time.Time.Microsecond(microsecond)
+            nanosecondValue = try Time.Time.Nanosecond(nanosecond)
         } catch {
             fatalError(
                 "ISO_8601.DateTime: sub-second component derived from nanoseconds was out of range — \(error)"
             )
         }
-        let time = Time_Primitives.Time(
+        let time = Time.Time(
             year: baseTime.year,
             month: baseTime.month,
             day: baseTime.day,
@@ -109,7 +109,7 @@ extension ISO_8601.DateTime {
         )
         self.init(
             time: time,
-            timezoneOffset: Time_Primitives.Time.Timezone.Offset(seconds: timezoneOffsetSeconds)
+            timezoneOffset: Time.Time.Timezone.Offset(seconds: timezoneOffsetSeconds)
         )
     }
 }
@@ -171,9 +171,9 @@ extension ISO_8601.DateTime {
         let microsecond = remaining / 1000
         let nanosecond = remaining % 1000
 
-        let time: Time_Primitives.Time
-        do throws(Time_Primitives.Time.Error) {
-            time = try Time_Primitives.Time(
+        let time: Time.Time
+        do throws(Time.Time.Error) {
+            time = try Time.Time(
                 year: year,
                 month: month,
                 day: day,
@@ -190,7 +190,7 @@ extension ISO_8601.DateTime {
 
         self.init(
             time: time,
-            timezoneOffset: Time_Primitives.Time.Timezone.Offset(seconds: timezoneOffsetSeconds)
+            timezoneOffset: Time.Time.Timezone.Offset(seconds: timezoneOffsetSeconds)
         )
     }
 }
@@ -212,7 +212,7 @@ extension ISO_8601.DateTime {
 
     public var ordinalDay: Int {
         let comp = components
-        let monthDays = Time_Primitives.Time.Calendar.Gregorian.daysInMonths(year: comp.year)
+        let monthDays = Time.Time.Calendar.Gregorian.daysInMonths(year: comp.year)
         let precedingMonthDays = monthDays[0..<(comp.month - 1)].reduce(0, +)
         return comp.day + precedingMonthDays
     }
@@ -238,9 +238,9 @@ extension ISO_8601.DateTime {
         let isoDay = isoWeekday
         let daysSinceMonday = isoDay - 1
 
-        let currentTime: Time_Primitives.Time
+        let currentTime: Time.Time
         do {
-            currentTime = try Time_Primitives.Time(
+            currentTime = try Time.Time(
                 year: comp.year,
                 month: comp.month,
                 day: comp.day,
@@ -255,12 +255,12 @@ extension ISO_8601.DateTime {
         }
         let mondayOfWeek =
             currentTime.secondsSinceEpoch
-            / Time_Primitives.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
+            / Time.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
             - daysSinceMonday
 
-        let jan4Time: Time_Primitives.Time
+        let jan4Time: Time.Time
         do {
-            jan4Time = try Time_Primitives.Time(
+            jan4Time = try Time.Time(
                 year: comp.year,
                 month: 1,
                 day: 4,
@@ -273,7 +273,7 @@ extension ISO_8601.DateTime {
         }
         let jan4 =
             jan4Time.secondsSinceEpoch
-            / Time_Primitives.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
+            / Time.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
 
         let jan4WeekdayEnum = jan4Time.weekday
         let jan4Weekday: Int
@@ -305,9 +305,9 @@ extension ISO_8601.DateTime {
 
     internal static func weeksInYear(_ year: Int) -> Int {
 
-        let jan1Time: Time_Primitives.Time
+        let jan1Time: Time.Time
         do {
-            jan1Time = try Time_Primitives.Time(
+            jan1Time = try Time.Time(
                 year: year,
                 month: 1,
                 day: 1,
@@ -335,7 +335,7 @@ extension ISO_8601.DateTime {
             return 53
         }
 
-        if jan1ISOWeekday == 3 && Time_Primitives.Time.Calendar.Gregorian.isLeapYear(year) {
+        if jan1ISOWeekday == 3 && Time.Time.Calendar.Gregorian.isLeapYear(year) {
             return 53
         }
 

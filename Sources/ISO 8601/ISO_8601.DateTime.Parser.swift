@@ -1,6 +1,6 @@
-public import Byte_Primitives
-public import Parser_Primitives
-public import Time_Primitives
+public import Byte
+public import Parser
+public import Time
 
 extension ISO_8601.DateTime {
 
@@ -122,9 +122,9 @@ extension ISO_8601.DateTime.Parser: Parser.`Protocol` {
                 )
             }
 
-            let localMidnight: Time_Primitives.Time
-            do throws(Time_Primitives.Time.Error) {
-                localMidnight = try Time_Primitives.Time(
+            let localMidnight: Time.Time
+            do throws(Time.Time.Error) {
+                localMidnight = try Time.Time(
                     year: year,
                     month: month,
                     day: day,
@@ -139,7 +139,7 @@ extension ISO_8601.DateTime.Parser: Parser.`Protocol` {
             do throws(ISO_8601.Date.Error) {
                 return try ISO_8601.DateTime(
                     secondsSinceEpoch: trueEpochOfMidnight
-                        + Time_Primitives.Time.Calendar.Gregorian.TimeConstants.secondsPerDay,
+                        + Time.Time.Calendar.Gregorian.TimeConstants.secondsPerDay,
                     nanoseconds: 0,
                     timezoneOffsetSeconds: timezoneOffset
                 )
@@ -153,9 +153,9 @@ extension ISO_8601.DateTime.Parser: Parser.`Protocol` {
         let microsecond = microsecondRemainder / 1000
         let nanosecond = microsecondRemainder % 1000
 
-        let localTime: Time_Primitives.Time
-        do throws(Time_Primitives.Time.Error) {
-            localTime = try Time_Primitives.Time(
+        let localTime: Time.Time
+        do throws(Time.Time.Error) {
+            localTime = try Time.Time(
                 year: year,
                 month: month,
                 day: day,

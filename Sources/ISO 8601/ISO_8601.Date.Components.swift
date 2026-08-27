@@ -1,4 +1,4 @@
-import Time_Primitives
+import Time
 
 extension ISO_8601.Date {
 
@@ -122,7 +122,7 @@ extension ISO_8601.Date.Components {
 extension ISO_8601.Date.Components {
     public init(_ dateTime: ISO_8601.Date) {
 
-        let localTime = Time_Primitives.Time(
+        let localTime = Time.Time(
             secondsSinceEpoch: dateTime.epoch.seconds + dateTime.timezone.offsetSeconds
         )
 

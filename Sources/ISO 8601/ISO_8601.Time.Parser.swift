@@ -1,4 +1,4 @@
-import Time_Primitives
+import Time
 
 extension ISO_8601.Time {
 
@@ -220,9 +220,9 @@ extension ISO_8601.Time.Parser {
         }
 
         let offset =
-            hours * Time_Primitives.Time.Calendar.Gregorian.TimeConstants.secondsPerHour
+            hours * Time.Time.Calendar.Gregorian.TimeConstants.secondsPerHour
             + minutes
-            * Time_Primitives.Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
+            * Time.Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
         return positive ? offset : -offset
     }
 }

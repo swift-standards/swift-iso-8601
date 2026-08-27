@@ -13,18 +13,18 @@ extension Target.Dependency {
     }
     static var time: Self {
         .product(
-            name: "Time Primitives",
-            package: "swift-time-primitives"
+            name: "Time",
+            package: "swift-time"
         )
     }
     static var asciiPrimitives: Self {
-        .product(name: "ASCII Primitives", package: "swift-ascii-primitives")
+        .product(name: "ASCII", package: "swift-ascii")
     }
     static var asciiDecimalParser: Self {
-        .product(name: "ASCII Decimal Parser Primitives", package: "swift-ascii-parser-primitives")
+        .product(name: "ASCII Decimal Parser", package: "swift-ascii-parser")
     }
     static var byteParser: Self {
-        .product(name: "Byte Parser Primitives", package: "swift-byte-parser-primitives")
+        .product(name: "Byte Parser", package: "swift-byte-parser")
     }
 }
 
@@ -42,27 +42,27 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-primitives/swift-standard-library-extensions.git",
+            url: "https://github.com/swift-molecules/swift-standard-library-extensions.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-time-primitives.git",
+            url: "https://github.com/swift-molecules/swift-time.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-ascii-primitives.git",
+            url: "https://github.com/swift-molecules/swift-ascii.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-parser-primitives.git",
+            url: "https://github.com/swift-molecules/swift-parser.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-ascii-parser-primitives.git",
+            url: "https://github.com/swift-molecules/swift-ascii-parser.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-byte-parser-primitives.git",
+            url: "https://github.com/swift-molecules/swift-byte-parser.git",
             branch: "main"
         ),
     ],
@@ -75,7 +75,7 @@ let package = Package(
                 .asciiPrimitives,
                 .asciiDecimalParser,
                 .byteParser,
-                .product(name: "Parser Primitives", package: "swift-parser-primitives"),
+                .product(name: "Parser", package: "swift-parser"),
             ]
         ),
         .testTarget(

@@ -1,4 +1,4 @@
-import Time_Primitives
+import Time
 
 extension ISO_8601.Time {
 
@@ -70,10 +70,10 @@ extension ISO_8601.Time.Formatter {
         let sign = offsetSeconds >= 0 ? "+" : "-"
         let absOffset = abs(offsetSeconds)
         let hours =
-            absOffset / Time_Primitives.Time.Calendar.Gregorian.TimeConstants.secondsPerHour
+            absOffset / Time.Time.Calendar.Gregorian.TimeConstants.secondsPerHour
         let minutes =
-            (absOffset % Time_Primitives.Time.Calendar.Gregorian.TimeConstants.secondsPerHour)
-            / Time_Primitives.Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
+            (absOffset % Time.Time.Calendar.Gregorian.TimeConstants.secondsPerHour)
+            / Time.Time.Calendar.Gregorian.TimeConstants.secondsPerMinute
 
         let hoursStr = hours < 10 ? "0\(hours)" : "\(hours)"
         let minutesStr = minutes < 10 ? "0\(minutes)" : "\(minutes)"

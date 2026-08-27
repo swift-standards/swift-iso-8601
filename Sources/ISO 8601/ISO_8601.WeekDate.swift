@@ -1,4 +1,4 @@
-import Time_Primitives
+import Time
 
 extension ISO_8601 {
 
@@ -46,9 +46,9 @@ extension ISO_8601.DateTime {
 
     public init(_ weekDate: ISO_8601.WeekDate) {
 
-        let jan4Time: Time_Primitives.Time
+        let jan4Time: Time.Time
         do {
-            jan4Time = try Time_Primitives.Time(
+            jan4Time = try Time.Time(
                 year: weekDate.weekYear,
                 month: 1,
                 day: 4,
@@ -63,7 +63,7 @@ extension ISO_8601.DateTime {
         }
         let jan4DaysSinceEpoch =
             jan4Time.secondsSinceEpoch
-            / Time_Primitives.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
+            / Time.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
 
         let jan4WeekdayEnum = jan4Time.weekday
         let jan4Weekday: Int
@@ -83,7 +83,7 @@ extension ISO_8601.DateTime {
         let daysSinceEpoch = mondayOfWeek1 + ((weekDate.week - 1) * 7) + (weekDate.weekday - 1)
 
         let totalSeconds =
-            daysSinceEpoch * Time_Primitives.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
+            daysSinceEpoch * Time.Time.Calendar.Gregorian.TimeConstants.secondsPerDay
 
         self.init(
 
