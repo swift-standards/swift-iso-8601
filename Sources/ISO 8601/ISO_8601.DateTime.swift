@@ -1,4 +1,7 @@
-import Byte_Parser
+import Byte
+import Byte_Standard_Library_Integration
+import Cursor
+import Cursor_Standard_Library_Integration
 import Parser
 import Standard_Library_Extensions
 public import Time
@@ -371,8 +374,8 @@ extension ISO_8601.DateTime: CustomStringConvertible {
 extension ISO_8601.DateTime {
 
     public init(_ string: String) throws(ISO_8601.DateTime.Parser.Error) {
-        var input = Byte.Input(utf8: string)
-        let value = try ISO_8601.DateTime.Parser<Byte.Input>().parse(&input)
+        var input = [Byte](utf8: string)[...]
+        let value = try ISO_8601.DateTime.Parser<ArraySlice<Byte>>().parse(&input)
         guard input.isEmpty else { throw .unexpectedTrailingInput }
         self = value
     }

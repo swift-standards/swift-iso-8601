@@ -1,4 +1,7 @@
-import Byte_Parser
+import Byte
+import Byte_Standard_Library_Integration
+import Cursor
+import Cursor_Standard_Library_Integration
 import Parser
 
 extension ISO_8601 {
@@ -73,8 +76,8 @@ extension ISO_8601.Duration: Codable {
 extension ISO_8601.Duration {
 
     public init(_ string: String) throws(ISO_8601.Duration.Parser.Error) {
-        var input = Byte.Input(utf8: string)
-        let value = try ISO_8601.Duration.Parser<Byte.Input>().parse(&input)
+        var input = [Byte](utf8: string)[...]
+        let value = try ISO_8601.Duration.Parser<ArraySlice<Byte>>().parse(&input)
         guard input.isEmpty else { throw .unexpectedTrailingInput }
         self = value
     }
